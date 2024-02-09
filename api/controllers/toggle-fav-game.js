@@ -1,4 +1,4 @@
-const { toggleFavGame } = require('logic')
+const { toggleFavGame } = require('@haakon/api-services')
 const { handleError, validateAuthorizationAndExtractPayload } = require('./helpers')
 
 module.exports = (req, res) => {

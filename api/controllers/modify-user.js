@@ -1,4 +1,4 @@
-const { modifyUser } = require('logic')
+const { modifyUser } = require('@haakon/api-services')
 const { handleError, validateAuthorizationAndExtractPayload } = require('./helpers')
 
 module.exports = (req, res) => {

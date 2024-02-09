@@ -1,4 +1,4 @@
-const { CredentialsError, ConflictError, FormatError, NotFoundError } = require('customs-errors')
+const { CredentialsError, ConflictError, FormatError, NotFoundError } = require('@haakon/api-errors')
 const { JsonWebTokenError, TokenExpiredError } = require('jsonwebtoken')
 const logger = require('../../utils/my-logger')
 

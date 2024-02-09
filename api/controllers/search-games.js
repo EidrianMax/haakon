@@ -1,4 +1,4 @@
-const { searchGames } = require('logic')
+const { searchGames } = require('@haakon/api-services')
 const { handleError } = require('./helpers')
 
 module.exports = async (req, res) => {

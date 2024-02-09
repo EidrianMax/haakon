@@ -1,4 +1,4 @@
-const { registerUser } = require('logic')
+const { registerUser } = require('@haakon/api-services')
 const { handleError } = require('./helpers')
 
 module.exports = (req, res) => {

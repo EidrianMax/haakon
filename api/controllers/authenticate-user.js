@@ -1,4 +1,4 @@
-const { authenticateUser } = require('logic')
+const { authenticateUser } = require('@haakon/api-services')
 const jwt = require('jsonwebtoken')
 const { env: { SECRET } } = process
 const { handleError } = require('./helpers')
