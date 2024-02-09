@@ -1,0 +1,3 @@
+functon retrieveQueueGames(userId) {
+
+}
