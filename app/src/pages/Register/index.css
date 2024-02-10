@@ -1,0 +1,20 @@
+.Register {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background-image: url(https://wallpaperaccess.com/full/7445.jpg);
+  background-size: cover;
+  background-position: center;
+}
+
+.Register-title {
+  text-align: center;
+}
+
+.RegisterForm-input {
+  margin-bottom: 1em;
+}
+
+.RegisterForm-Button {
+  margin-bottom: 1em;
+}

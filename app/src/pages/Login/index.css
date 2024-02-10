@@ -1,0 +1,20 @@
+.Login {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background-image: url(https://wallpaperaccess.com/full/7445.jpg);
+  background-size: cover;
+  background-position: center;
+}
+
+.Login-title {
+  text-align: center;
+}
+
+.LoginForm-input {
+  margin-bottom: 1em;
+}
+
+.LoginForm-Button {
+  margin-bottom: 1em;
+}

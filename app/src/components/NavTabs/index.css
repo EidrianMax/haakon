@@ -1,0 +1,17 @@
+.NavTabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0 auto 1em;
+}
+
+.NavTabs-item {
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: white;
+}
+
+.NavTabs-item.is-active {
+  border-bottom: 2px solid var(--sixth);
+}

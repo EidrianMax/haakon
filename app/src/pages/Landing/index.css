@@ -1,0 +1,33 @@
+.Landing {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background-image: url(https://wallpaperaccess.com/full/7445.jpg);
+  background-size: cover;
+  background-position: center;
+}
+
+.Landing-container {
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media screen and (min-width: 425px) {
+  .Landing-container {
+    max-width: 425px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .Landing-container {
+    max-width: 768px;
+  }
+}
+
+.Landing-title {
+  text-align: center;
+}
+
+.Landing-Button {
+  margin-bottom: 1rem;
+}

@@ -1,0 +1,22 @@
+.deleteAccount {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.deleteAccount__title {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 1em;
+}
+
+.deleteAccount__description {
+    margin-bottom: 1.3em;
+}
+
+.deleteAccountForm__input {
+    margin-bottom: 1em;
+}
+
+.deleteAccountForm__btn {
+    margin-bottom: 1em;
+}

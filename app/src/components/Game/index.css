@@ -1,0 +1,85 @@
+.Game {
+  background-color: #151515;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.6em;
+  overflow: hidden;
+}
+
+.Game-header {
+  position: relative;
+}
+
+.Game-backgroundImage {
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  object-position: top;
+}
+
+.Game-fav {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: transparent;
+  color: var(--sixth);
+  border: none;
+  text-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  padding: 0;
+  font-size: 1.8rem;
+  transition: color 0.2s;
+  font-weight: lighter;
+}
+
+.Game-body {
+  padding: 1.4em 1.5em;
+}
+
+.Game-platforms-and-score {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1em;
+}
+
+.Game-platforms {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+.Game-score {
+  display: inline-block;
+  border: 1px solid #6dc849;
+  border-radius: 3px;
+  color: #6dc849;
+  padding: 0.3em 0.6em;
+  font-size: 0.8rem;
+}
+
+.Game-name-link {
+  text-decoration: none;
+  color: var(--sixth);
+  transition: color 0.2s;
+}
+
+.Game-name-link:hover {
+  color: var(--secondary);
+}
+
+.Game-genres {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+.Game-genres-and-more-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1em;
+}

@@ -1,0 +1,23 @@
+.gameCards {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    display: grid;
+    gap: 30px;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    width: 90%;
+}
+
+@media (min-width: 600px) {
+    .gameCards {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: repeat(5, 1fr);
+    }
+}
+
+@media (min-width: 700px) {
+    .gameCards {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

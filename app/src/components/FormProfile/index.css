@@ -1,0 +1,17 @@
+.formProfile {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.formProfile__input {
+    margin-bottom: 1em;
+}
+
+.formProfile__btn {
+    margin-bottom: 1em;
+}
+
+.formProfile__delete {
+    text-align: right;
+    cursor: pointer;
+}

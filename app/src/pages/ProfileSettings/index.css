@@ -1,0 +1,17 @@
+.userSettings__title {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.userSettings__bar {
+    margin-bottom: 1.7em;
+}
+
+.bar__item {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.bar__item--active {
+    border-bottom: 2px solid var(--sixth);
+}

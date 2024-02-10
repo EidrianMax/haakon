@@ -1,0 +1,47 @@
+.Aside {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  background-color: var(--first);
+  z-index: 10;
+}
+
+.Aside-closeIcon {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: white;
+}
+
+.Aside-closeIcon:hover {
+  color: var(--secondary);
+}
+
+.Aside-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.Aside-list-item:first-child {
+  margin-top: 2.5em;
+}
+
+.Aside-list-item {
+  margin-bottom: 1em;
+  cursor: pointer;
+  padding: 0.8em 1.5em;
+  margin-bottom: 0;
+  transition: background-color 0.4s;
+}
+
+.Aside-list-item:hover {
+  background-color: var(--fith);
+}

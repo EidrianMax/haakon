@@ -1,0 +1,40 @@
+.GameCard {
+  border-radius: 0.6em;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+}
+
+.GameCard-img {
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  object-position: top;
+}
+
+.GameCard-btnIcon {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  background-color: transparent;
+  color: var(--sixth);
+  border: none;
+  text-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  padding: 0;
+  font-size: 1.8rem;
+  transition: color 0.2s;
+  font-weight: lighter;
+}
+
+.GameCard-btnIcon:hover {
+  color: var(--secondary);
+}
+
+.GameCard-title {
+  position: absolute;
+  bottom: 15px;
+  width: 100%;
+  text-align: center;
+  font-size: 1.7rem;
+  font-weight: bold;
+  text-shadow: 0px 0px 6px rgba(255, 255, 255, 0.7);
+}
