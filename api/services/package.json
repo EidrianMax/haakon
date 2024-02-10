@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha *.spec.js",
+    "test": "cross-env NODE_ENV=test mocha *.spec.js",
     "test:coverage": "nyc --reporter=html --reporter=text mocha *.spec.js"
   },
   "keywords": [],

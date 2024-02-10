@@ -1,4 +1,8 @@
-require('dotenv').config()
+const { NODE_ENV } = process.env
+
+require('dotenv').config({
+    path: `./.env.${NODE_ENV}.local`
+})
 
 const express = require('express')
 const { mongoose } = require('@haakon/api-database')
@@ -75,7 +79,7 @@ mongoose.connect(MONGO_DB_URI)
 
         server.use('/api', api)
 
-        server.listen(port, () => logger.info(`server up and listening on port ${port}`))
+        server.listen(port, () => logger.info(`server up and listening on port ${port} in enviroment ${NODE_ENV}`))
 
         process.on('SIGINT', () => {
             logger.info('stopping server')
