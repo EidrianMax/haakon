@@ -17,10 +17,6 @@ logger.info('starting server')
 
 const server = express()
 
-server.get('/', (req, res) => {
-  throw new Error('BROKEN') // Express will catch this on its own.
-})
-
 server.use(cors(corsOptions))
 server.use(express.json())
 
