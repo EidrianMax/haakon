@@ -1,6 +1,6 @@
 const { authenticateUser } = require('@haakon/api-services')
 const jwt = require('jsonwebtoken')
-const { env: { SECRET } } = process
+const { JWT_SECRET } = process.env
 
 module.exports = (req, res, next) => {
   const { body: { username, password } } = req
@@ -8,7 +8,7 @@ module.exports = (req, res, next) => {
   try {
     authenticateUser(username, password)
       .then(id => {
-        const token = jwt.sign({ sub: id, exp: Math.floor(Date.now() / 1000) + 3600 }, SECRET)
+        const token = jwt.sign({ sub: id, exp: Math.floor(Date.now() / 1000) + 3600 }, JWT_SECRET)
 
         res.json({ token })
       })
