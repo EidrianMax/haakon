@@ -1,7 +1,7 @@
 require('dotenv').config()
+require('./config/mongo-connection')
 
 const express = require('express')
-const { mongoose } = require('@haakon/api-database')
 
 const {
   registerUser,
@@ -28,66 +28,58 @@ const corsOptions = {
   'Access-Control-Allow-Methods': ['GET', 'PUT', 'POST', 'DELETE']
 }
 
-const { env: { PORT, MONGO_DB_URI, MONGO_DB_URI_DEV, NODE_ENV }, argv: [, , port = PORT || 8000] } = process
-
-const URI = NODE_ENV === 'development'
-  ? MONGO_DB_URI_DEV
-  : MONGO_DB_URI
+const { env: { PORT, NODE_ENV }, argv: [, , port = PORT || 8000] } = process
 
 logger.info('starting server')
 
-mongoose.connect(URI)
-  .then(() => {
-    const server = express()
+const server = express()
 
-    server.use(cors(corsOptions))
-    server.use(express.json())
+server.use(cors(corsOptions))
+server.use(express.json())
 
-    const api = express.Router()
+const api = express.Router()
 
-    api.post('/users', registerUser)
+api.post('/users', registerUser)
 
-    api.post('/users/auth', authenticateUser)
+api.post('/users/auth', authenticateUser)
 
-    api.get('/users', retrieveUser)
+api.get('/users', retrieveUser)
 
-    api.patch('/users', modifyUser)
+api.patch('/users', modifyUser)
 
-    api.delete('/users', unregisterUser)
+api.delete('/users', unregisterUser)
 
-    api.get('/games', searchGames)
+api.get('/games', searchGames)
 
-    api.get('/games/all', retrieveAllGames)
+api.get('/games/all', retrieveAllGames)
 
-    api.get('/games/:gameId', retrieveGame)
+api.get('/games/:gameId', retrieveGame)
 
-    api.patch('/users/favs', toggleFavGame)
+api.patch('/users/favs', toggleFavGame)
 
-    api.get('/users/favs', retrieveFavGames)
+api.get('/users/favs', retrieveFavGames)
 
-    api.patch('/users/playing', togglePlayingGame)
+api.patch('/users/playing', togglePlayingGame)
 
-    api.get('/users/playing', retrievePlayingGames)
+api.get('/users/playing', retrievePlayingGames)
 
-    api.patch('/users/played', togglePlayedGame)
+api.patch('/users/played', togglePlayedGame)
 
-    api.get('/users/played', retrievePlayedGames)
+api.get('/users/played', retrievePlayedGames)
 
-    api.all('*', (req, res) => {
-      res.status(404).json({ message: 'sorry, this endpoint isn\'t available' })
-    })
+api.all('*', (req, res) => {
+  res.status(404).json({ message: 'sorry, this endpoint isn\'t available' })
+})
 
-    server.use('/api', api)
+server.use('/api', api)
 
-    server.listen(port, () => {
-      logger.info(`enviroment: ${NODE_ENV}`)
-      logger.info(`server up and listening on port ${port}`)
-    })
+server.listen(port, () => {
+  logger.info(`enviroment: ${NODE_ENV}`)
+  logger.info(`server up and listening on port ${port}`)
+})
 
-    process.on('SIGINT', () => {
-      logger.info('stopping server')
+process.on('SIGINT', () => {
+  logger.info('stopping server')
 
-      process.exit(0)
-    })
-  })
-  .catch(error => logger.error(error))
+  process.exit(0)
+})
