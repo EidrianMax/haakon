@@ -1,7 +1,7 @@
 require('dotenv').config()
 const { expect } = require('chai')
-const { models: { User, Game }, mongoose } = require('@haakon/api-database')
-const { NotFoundError, FormatError } = require('@haakon/api-errors')
+const { models: { User }, mongoose } = require('@haakon/api-database')
+const { FormatError } = require('@haakon/api-errors')
 const retrieveFavGames = require('./retrieve-fav-games')
 const bcrypt = require('bcryptjs')
 

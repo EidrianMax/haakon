@@ -1,4 +1,3 @@
-const { NotFoundError } = require('@haakon/api-errors')
 const { models: { Game } } = require('@haakon/api-database')
 
 function retrieveAllGames () {

@@ -1,7 +1,6 @@
 require('dotenv').config()
 const { expect } = require('chai')
 const { mongoose, models: { Game } } = require('@haakon/api-database')
-const { NotFoundError } = require('@haakon/api-errors')
 const retrieveAllGames = require('./retrieve-all-games')
 
 const { env: { MONGO_URL } } = process

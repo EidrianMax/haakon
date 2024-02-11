@@ -22,7 +22,7 @@ describe('unregisterUser', () => {
     }
 
     const _user = await User.create({ ...user, password: bcrypt.hashSync(user.password) })
-    return userId = _user.id
+    userId = _user.id
   })
 
   describe('Happy Path', () => {

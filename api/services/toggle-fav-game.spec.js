@@ -2,7 +2,7 @@ require('dotenv').config()
 const { expect } = require('chai')
 const { models: { User }, mongoose } = require('@haakon/api-database')
 const { Types: { ObjectId } } = mongoose
-const { NotFoundError, FormatError } = require('@haakon/api-errors')
+const { NotFoundError } = require('@haakon/api-errors')
 const toggleFavGame = require('./toggle-fav-game')
 const bcrypt = require('bcryptjs')
 

@@ -1,4 +1,4 @@
-const { mongoose, models: { User } } = require('@haakon/api-database')
+const { models: { User } } = require('@haakon/api-database')
 const { validateId, validateData } = require('./helpers/validators')
 const { NotFoundError, ConflictError, CredentialsError } = require('@haakon/api-errors')
 const bcrypt = require('bcryptjs')

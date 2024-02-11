@@ -1,3 +1,0 @@
-functon retrieveQueueGames(userId) {
-
-}
