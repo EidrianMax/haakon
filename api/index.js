@@ -1,4 +1,4 @@
-require('dotenv').config()
+const { port, enviroment } = require('./config/enviroment')
 require('./config/mongo-connection')
 
 const express = require('express')
@@ -10,8 +10,6 @@ const { errorHandler } = require('./middlewares')
 const corsOptions = {
   'Access-Control-Allow-Methods': ['GET', 'PUT', 'POST', 'DELETE']
 }
-
-const { env: { PORT, NODE_ENV }, argv: [, , port = PORT || 8000] } = process
 
 logger.info('starting server')
 
@@ -30,7 +28,7 @@ server.all('*', (req, res) => {
 server.use(errorHandler)
 
 server.listen(port, () => {
-  logger.info(`enviroment: ${NODE_ENV}`)
+  logger.info(`enviroment: ${enviroment}`)
   logger.info(`server up and listening on port ${port}`)
 })
 
