@@ -5,6 +5,7 @@ const express = require('express')
 const { usersRouter, gamesRouter } = require('./routes')
 const logger = require('./utils/my-logger')
 const cors = require('cors')
+const { errorHandler } = require('./middlewares')
 
 const corsOptions = {
   'Access-Control-Allow-Methods': ['GET', 'PUT', 'POST', 'DELETE']
@@ -16,6 +17,10 @@ logger.info('starting server')
 
 const server = express()
 
+server.get('/', (req, res) => {
+  throw new Error('BROKEN') // Express will catch this on its own.
+})
+
 server.use(cors(corsOptions))
 server.use(express.json())
 
@@ -25,6 +30,8 @@ server.use('/api/games', gamesRouter)
 server.all('*', (req, res) => {
   res.status(404).json({ message: 'sorry, this endpoint isn\'t available' })
 })
+
+server.use(errorHandler)
 
 server.listen(port, () => {
   logger.info(`enviroment: ${NODE_ENV}`)

@@ -1,7 +1,7 @@
 const { togglePlayedGame } = require('@haakon/api-services')
-const { handleError, validateAuthorizationAndExtractPayload } = require('./helpers')
+const { validateAuthorizationAndExtractPayload } = require('./helpers')
 
-module.exports = (req, res) => {
+module.exports = (req, res, next) => {
   const { headers: { authorization }, body: { gameId } } = req
 
   try {
@@ -9,8 +9,8 @@ module.exports = (req, res) => {
 
     togglePlayedGame(id, gameId)
       .then(() => res.status(201).send())
-      .catch(error => handleError(error, res))
+      .catch(next)
   } catch (error) {
-    handleError(error, res)
+    next(error)
   }
 }

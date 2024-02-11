@@ -1,13 +1,12 @@
 const { searchGames } = require('@haakon/api-services')
-const { handleError } = require('./helpers')
 
-module.exports = async (req, res) => {
+module.exports = async (req, res, next) => {
   const { query: { q } } = req
 
   try {
     const games = await searchGames(q)
     res.json(games)
   } catch (error) {
-    handleError(error, res)
+    next(error)
   }
 }

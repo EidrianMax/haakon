@@ -1,7 +1,7 @@
 const { modifyUser } = require('@haakon/api-services')
-const { handleError, validateAuthorizationAndExtractPayload } = require('./helpers')
+const { validateAuthorizationAndExtractPayload } = require('./helpers')
 
-module.exports = (req, res) => {
+module.exports = (req, res, next) => {
   const { headers: { authorization }, body: data } = req
 
   try {
@@ -9,8 +9,8 @@ module.exports = (req, res) => {
 
     modifyUser(id, data)
       .then(() => res.status(204).send())
-      .catch(error => handleError(error, res))
+      .catch(next)
   } catch (error) {
-    handleError(error, res)
+    next(error)
   }
 }

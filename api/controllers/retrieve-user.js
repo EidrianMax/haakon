@@ -1,7 +1,7 @@
 const { retrieveUser } = require('@haakon/api-services')
-const { handleError, validateAuthorizationAndExtractPayload } = require('./helpers')
+const { validateAuthorizationAndExtractPayload } = require('./helpers')
 
-module.exports = (req, res) => {
+module.exports = (req, res, next) => {
   const { headers: { authorization } } = req
 
   try {
@@ -9,8 +9,8 @@ module.exports = (req, res) => {
 
     retrieveUser(id)
       .then(user => res.json(user))
-      .catch(error => handleError(error, res))
+      .catch(next)
   } catch (error) {
-    handleError(error, res)
+    next(error)
   }
 }

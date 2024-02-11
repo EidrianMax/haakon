@@ -1,9 +1,8 @@
 const { authenticateUser } = require('@haakon/api-services')
 const jwt = require('jsonwebtoken')
 const { env: { SECRET } } = process
-const { handleError } = require('./helpers')
 
-module.exports = (req, res) => {
+module.exports = (req, res, next) => {
   const { body: { username, password } } = req
 
   try {
@@ -13,8 +12,8 @@ module.exports = (req, res) => {
 
         res.json({ token })
       })
-      .catch(error => handleError(error, res))
+      .catch(next)
   } catch (error) {
-    handleError(error, res)
+    next(error)
   }
 }
