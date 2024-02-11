@@ -1,8 +1,4 @@
-const { NODE_ENV } = process.env
-
-require('dotenv').config({
-  path: `./.env.${NODE_ENV}.local`
-})
+require('dotenv').config()
 
 const express = require('express')
 const { mongoose } = require('@haakon/api-database')
@@ -32,11 +28,15 @@ const corsOptions = {
   'Access-Control-Allow-Methods': ['GET', 'PUT', 'POST', 'DELETE']
 }
 
-const { env: { PORT, MONGO_DB_URI }, argv: [, , port = PORT || 8000] } = process
+const { env: { PORT, MONGO_DB_URI, MONGO_DB_URI_DEV, NODE_ENV }, argv: [, , port = PORT || 8000] } = process
+
+const URI = NODE_ENV === 'development'
+  ? MONGO_DB_URI_DEV
+  : MONGO_DB_URI
 
 logger.info('starting server')
 
-mongoose.connect(MONGO_DB_URI)
+mongoose.connect(URI)
   .then(() => {
     const server = express()
 
@@ -79,7 +79,10 @@ mongoose.connect(MONGO_DB_URI)
 
     server.use('/api', api)
 
-    server.listen(port, () => logger.info(`server up and listening on port ${port} in enviroment ${NODE_ENV}`))
+    server.listen(port, () => {
+      logger.info(`enviroment: ${NODE_ENV}`)
+      logger.info(`server up and listening on port ${port}`)
+    })
 
     process.on('SIGINT', () => {
       logger.info('stopping server')
