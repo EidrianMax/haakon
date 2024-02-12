@@ -62,4 +62,13 @@ const user = new Schema({
   ]
 })
 
+user.set('toObject', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id
+    delete returnedObject._id
+    delete returnedObject.__v
+    delete returnedObject.password
+  }
+})
+
 module.exports = user
