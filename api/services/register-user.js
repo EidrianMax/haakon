@@ -4,26 +4,38 @@ const { models: { User } } = require('@haakon/api-database')
 const bcrypt = require('bcryptjs')
 
 /**
- * TODO doc me
- * @param {*} name
- * @param {*} username
- * @param {*} password
+ *
+ * @param {String} name
+ * @param {String} username
+ * @param {String} password
+ * @returns {Object} User registered
  */
 
-function registerUser (name, username, password) {
+async function registerUser (name, username, password) {
   validateName(name)
   validateUsername(username)
   validatePassword(password)
 
-  return (async () => {
-    try {
-      await User.create({ name, username, password: bcrypt.hashSync(password) })
-    } catch (error) {
-      if (error.code === 11000) { throw new ConflictError(`user with username ${username} already exists`) }
+  try {
+    const hashPassword = await bcrypt.hash(password, 10)
 
-      throw error
+    const newUser = new User({
+      name,
+      username,
+      password: hashPassword
+    })
+
+    const user = await newUser.save()
+
+    return {
+      name: user.name,
+      username: user.username
     }
-  })()
+  } catch (error) {
+    if (error.code === 11000) { throw new ConflictError(`user with username ${username} already exists`) }
+
+    throw error
+  }
 }
 
 module.exports = registerUser
