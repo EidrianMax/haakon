@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "scrape": "cross-env NODE_ENV=production node populate/scrape-data",
-    "scrape:dev": "cross-env NODE_ENV=development node populate/scrape-data.js"
+    "scrape:dev": "cross-env NODE_ENV=development node populate/scrape-data.js",
+    "scrape:test": "cross-env NODE_ENV=test node populate/scrape-data.js"
   },
   "keywords": [],
   "author": "",
