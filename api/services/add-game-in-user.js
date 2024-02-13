@@ -1,8 +1,17 @@
-const { validateId } = require('./helpers/validators')
+const { validateId, validateProperty } = require('./helpers/validators')
 const { NotFoundError } = require('@haakon/api-errors')
 const { models: { User, Game } } = require('@haakon/api-database')
 
-async function pushFavGame (userId, gameId) {
+/**
+ * Add a gameId in favGames, playedGames or playingGames
+ * @param {String} property
+ * @param {String} userId
+ * @param {String} gameId
+ * @returns An array depend on its property
+ */
+
+async function addGameInUser (property, userId, gameId) {
+  validateProperty(property)
   validateId(userId)
   validateId(gameId)
 
@@ -14,11 +23,11 @@ async function pushFavGame (userId, gameId) {
 
   if (!game) throw new NotFoundError(`game with id ${gameId} not found`)
 
-  user.favGames.push(game.id)
+  user[property].push(game.id)
 
   const userSaved = await user.save()
 
-  return userSaved.favGames
+  return userSaved[property]
 }
 
-module.exports = pushFavGame
+module.exports = addGameInUser
