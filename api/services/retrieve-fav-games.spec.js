@@ -1,93 +1,81 @@
 require('dotenv').config()
-const { expect } = require('chai')
-const { models: { User }, mongoose } = require('@haakon/api-database')
-const { FormatError } = require('@haakon/api-errors')
+const { models: { User, Game }, mongoose } = require('@haakon/api-database')
+const { Types: { ObjectId } } = mongoose
+const { FormatError, NotFoundError } = require('@haakon/api-errors')
 const retrieveFavGames = require('./retrieve-fav-games')
-const bcrypt = require('bcryptjs')
 
-const { env: { MONGO_URL } } = process
+const { MONGO_URL } = process.env
 
 describe('retrieveFavGames', () => {
-  before(() => mongoose.connect(MONGO_URL))
+  let userId
 
-  let user, userId
+  beforeAll(async () => {
+    await mongoose.connect(MONGO_URL)
+  })
 
-  describe('Happy Path', () => {
-    beforeEach(async () => {
-      user = {
-        name: 'Wendy Pan',
-        username: 'wendypan',
-        password: '123123123'
-      }
+  beforeEach(async () => {
+    await User.deleteMany()
 
-      const _user = await User.create({ ...user, password: bcrypt.hashSync(user.password) })
-      userId = _user.id
+    const games = await Game.find({})
 
-      const user2 = await User.findById(userId)
+    const user = {
+      name: 'Jhon Doe',
+      username: 'jhondoe',
+      password: Math.random().toString(36).slice(2),
+      favGames: [games[0].id, games[1].id, games[2].id]
+    }
 
-      user2.favGames.push('61f953b5c7c1cf74c3abf335', '61f953b5c7c1cf74c3abf333', '61f953b5c7c1cf74c3abf331')
+    const userSaved = await User.create(user)
 
-      await user2.save()
-    })
+    userId = userSaved.id
+  })
 
-    it('shoul be good when retrieve fav games', async () => {
-      const gameFavs = await retrieveFavGames(userId)
-      expect(gameFavs).to.be.instanceOf(Array)
-      expect(gameFavs).to.be.an('array')
-      expect(gameFavs).to.be.length(3)
+  it('shoul succed when retrieve fav games', async () => {
+    const gameFavs = await retrieveFavGames(userId)
+    expect(gameFavs).toBeInstanceOf(Array)
+    expect(gameFavs).toHaveLength(3)
+  })
 
-      gameFavs.forEach(gameFav => {
-        const { id, name, backgroundImage, platforms, genres, score } = gameFav
+  it('should fail when user do not exits', async () => {
+    const falseUserId = new ObjectId().toString()
 
-        expect(gameFav).to.exist
-        expect(gameFav).to.be.a('object')
-        expect(gameFav).to.have.all.keys(
-          'id',
-          'name',
-          'backgroundImage',
-          'platforms',
-          'genres',
-          'score')
-        expect(id).to.to.be.a('string')
-        expect(name).to.to.be.a('string')
-        expect(backgroundImage).to.to.be.a('string')
-        expect(platforms).to.be.an('array')
-        expect(platforms).to.be.instanceOf(Array)
-        expect(genres).to.be.an('array')
-        expect(genres).to.be.instanceOf(Array)
-        expect(score).to.be.a('number')
-      })
-    })
+    try {
+      await retrieveFavGames(falseUserId)
+      throw new Error('should not reach this point')
+    } catch (error) {
+      expect(error).toBeInstanceOf(NotFoundError)
+      expect(error.message).toBe(`user with id ${falseUserId} not found`)
+    }
   })
 
   describe('when parameters are not valid', () => {
-    describe('when id is not valid', () => {
-      it('should fail when id is not a string', () => {
-        expect(() => retrieveFavGames(true)).to.throw(TypeError, 'id is not a string')
-        expect(() => retrieveFavGames(123)).to.throw(TypeError, 'id is not a string')
-        expect(() => retrieveFavGames({})).to.throw(TypeError, 'id is not a string')
-        expect(() => retrieveFavGames(() => { })).to.throw(TypeError, 'id is not a string')
-        expect(() => retrieveFavGames([])).to.throw(TypeError, 'id is not a string')
+    describe('when user id is not valid', () => {
+      it('should fail when id is not a string', async () => {
+        await expect(retrieveFavGames(true)).rejects.toThrow(TypeError)
+        await expect(retrieveFavGames(123)).rejects.toThrow(TypeError)
+        await expect(retrieveFavGames({})).rejects.toThrow(TypeError)
+        await expect(retrieveFavGames(() => { })).rejects.toThrow(TypeError)
+        await expect(retrieveFavGames([])).rejects.toThrow(TypeError)
       })
 
-      it('should fail when id is empty or blank', () => {
-        expect(() => retrieveFavGames('')).to.throw(FormatError, 'id is empty or blank')
-        expect(() => retrieveFavGames('   ')).to.throw(FormatError, 'id is empty or blank')
+      it('should fail when id is empty or blank', async () => {
+        await expect(retrieveFavGames('')).rejects.toThrow(FormatError)
+        await expect(retrieveFavGames('   ')).rejects.toThrow(FormatError)
       })
 
-      it('should fail when id has spaces', () => {
-        expect(() => retrieveFavGames(' abcd1234abcd1234abcd1234 ')).to.throw(FormatError, 'id has blank spaces')
-        expect(() => retrieveFavGames('abcd 1234abc d1234abc d1234')).to.throw(FormatError, 'id has blank spaces')
+      it('should fail when id has spaces', async () => {
+        await expect(retrieveFavGames(' abcd1234abcd1234abcd1234 ')).rejects.toThrow(FormatError)
+        await expect(retrieveFavGames('abcd 1234abc d1234abc d1234')).rejects.toThrow(FormatError)
       })
 
-      it('should fail when id is not valid', () => {
+      it('should fail when id is not valid', async () => {
         const wrongMongoId = '61b8d031158b2213c7cc37b'
-        expect(() => retrieveFavGames(wrongMongoId)).to.throw(FormatError, 'id is not valid')
+        await expect(retrieveFavGames(wrongMongoId)).rejects.toThrow(FormatError)
       })
     })
   })
 
-  after(async () => {
+  afterAll(async () => {
     await User.deleteMany()
     await mongoose.disconnect()
   })
