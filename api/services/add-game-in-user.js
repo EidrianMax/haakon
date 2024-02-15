@@ -23,6 +23,8 @@ async function addGameInUser (property, userId, gameId) {
 
   if (!game) throw new NotFoundError(`game with id ${gameId} not found`)
 
+  // TODO if game is in user will not saved
+
   user[property].push(game.id)
 
   const userSaved = await user.save()

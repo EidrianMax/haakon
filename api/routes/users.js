@@ -4,7 +4,7 @@ const {
   retrieveUser,
   modifyUser,
   unregisterUser,
-  toggleFavGame,
+  addFavGame,
   retrieveFavGames,
   togglePlayingGame,
   retrievePlayingGames,
@@ -20,8 +20,8 @@ usersRouter
   .get('/', retrieveUser)
   .patch('/', modifyUser)
   .delete('/', unregisterUser)
-  .patch('/favs', toggleFavGame)
   .get('/favs', retrieveFavGames)
+  .post('/favs/:gameId', addFavGame)
   .patch('/playing', togglePlayingGame)
   .get('/playing', retrievePlayingGames)
   .patch('/played', togglePlayedGame)
