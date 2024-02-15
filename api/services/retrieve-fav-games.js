@@ -1,6 +1,6 @@
 const { validateId } = require('./helpers/validators')
 const { NotFoundError } = require('@haakon/api-errors')
-const { models: { User } } = require('@haakon/api-database')
+const { models: { User, Game } } = require('@haakon/api-database')
 
 async function retrieveFavGames (userId) {
   validateId(userId)
@@ -9,7 +9,11 @@ async function retrieveFavGames (userId) {
 
   if (!user) throw new NotFoundError(`user with id ${userId} not found`)
 
-  return user.favGames
+  const games = await Game.find({ _id: { $in: user.favGames } })
+    .populate('platforms', { name: 1 })
+    .populate('genres', { name: 1 })
+
+  return games
 }
 
 module.exports = retrieveFavGames
