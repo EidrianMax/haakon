@@ -10,8 +10,7 @@ module.exports = {
   retrieveFavGames: require('./retrieve-fav-games'),
   addFavGame: require('./add-fav-game'),
   deleteFavGame: require('./delete-fav-game'),
-  togglePlayingGame: require('./toggle-playing-game'),
   retrievePlayingGames: require('./retrieve-playing-games'),
-  togglePlayedGame: require('./toggle-played-game'),
-  retrievePlayedGames: require('./retrieve-played-games')
+  addPlayingGame: require('./add-playing-game'),
+  deletePlayingGame: require('./delete-playing-game')
 }
