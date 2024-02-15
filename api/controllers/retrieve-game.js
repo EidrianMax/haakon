@@ -1,12 +1,12 @@
 const { retrieveGame } = require('@haakon/api-services')
-const { validateAuthorizationAndExtractPayload } = require('./helpers')
 
 module.exports = async (req, res, next) => {
-  const { params: { gameId }, headers: { authorization } } = req
+  const { params: { gameId } } = req
 
   try {
-    const { sub: userId } = validateAuthorizationAndExtractPayload(authorization)
-    const game = await retrieveGame(gameId, userId)
+    const game = await retrieveGame(gameId)
+
+    // FIXME toJson from schema game
     res.json(game)
   } catch (error) {
     next(error)
