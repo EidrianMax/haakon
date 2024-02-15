@@ -4,12 +4,15 @@ const {
   retrieveUser,
   modifyUser,
   unregisterUser,
-  addFavGame,
   retrieveFavGames,
-  togglePlayingGame,
+  addFavGame,
+  deleteFavGame,
   retrievePlayingGames,
-  togglePlayedGame,
-  retrievePlayedGames
+  addPlayingGame,
+  deletePlayingGame,
+  retrievePlayedGames,
+  addPlayedGame,
+  deletePlayedGame
 } = require('../controllers')
 
 const usersRouter = require('express').Router()
@@ -22,9 +25,12 @@ usersRouter
   .delete('/', unregisterUser)
   .get('/favs', retrieveFavGames)
   .post('/favs/:gameId', addFavGame)
-  .patch('/playing', togglePlayingGame)
+  .delete('/favs/:gameId', deleteFavGame)
   .get('/playing', retrievePlayingGames)
-  .patch('/played', togglePlayedGame)
+  .post('/playing/:gameId', addPlayingGame)
+  .delete('/playing/:gameId', deletePlayingGame)
   .get('/played', retrievePlayedGames)
+  .post('/played/:gameId', addPlayedGame)
+  .delete('/played/:gameId', deletePlayedGame)
 
 module.exports = usersRouter

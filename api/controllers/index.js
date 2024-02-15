@@ -12,5 +12,8 @@ module.exports = {
   deleteFavGame: require('./delete-fav-game'),
   retrievePlayingGames: require('./retrieve-playing-games'),
   addPlayingGame: require('./add-playing-game'),
-  deletePlayingGame: require('./delete-playing-game')
+  deletePlayingGame: require('./delete-playing-game'),
+  retrievePlayedGames: require('./retrieve-played-games'),
+  addPlayedGame: require('./add-played-game'),
+  deletePlayedGame: require('./delete-played-game')
 }

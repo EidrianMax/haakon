@@ -1,15 +1,15 @@
 const { retrievePlayedGames } = require('@haakon/api-services')
 const { validateAuthorizationAndExtractPayload } = require('./helpers')
 
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
   const { headers: { authorization } } = req
 
   try {
     const { sub: id } = validateAuthorizationAndExtractPayload(authorization)
 
-    retrievePlayedGames(id)
-      .then(favGames => res.json(favGames))
-      .catch(next)
+    const favGames = await retrievePlayedGames(id)
+
+    res.json(favGames)
   } catch (error) {
     next(error)
   }
