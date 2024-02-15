@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "workspaces": [
+    "database",
+    "errors",
+    "services"
+  ],
   "scripts": {
     "start": "NODE_ENV=production node .",
     "dev": "cross-env NODE_ENV=development nodemon .",
