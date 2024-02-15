@@ -1,15 +1,19 @@
 const { retrieveUser } = require('@haakon/api-services')
 const { validateAuthorizationAndExtractPayload } = require('./helpers')
 
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
   const { headers: { authorization } } = req
 
   try {
     const { sub: id } = validateAuthorizationAndExtractPayload(authorization)
 
-    retrieveUser(id)
-      .then(user => res.json(user))
-      .catch(next)
+    const user = await retrieveUser(id)
+
+    // TODO refactor when convert to monorepo
+    res.json({
+      name: user.name,
+      username: user.username
+    })
   } catch (error) {
     next(error)
   }
