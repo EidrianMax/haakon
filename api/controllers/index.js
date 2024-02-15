@@ -4,13 +4,16 @@ module.exports = {
   retrieveUser: require('./retrieve-user'),
   modifyUser: require('./modify-user'),
   unregisterUser: require('./unregister-user'),
-  searchGames: require('./search-games'),
-  retrieveAllGames: require('./retrieve-all-games'),
+  searchGames: require('./retrieve-search-games'),
+  retrieveSearchGames: require('./retrieve-search-games'),
   retrieveGame: require('./retrieve-game'),
-  toggleFavGame: require('./toggle-fav-game'),
   retrieveFavGames: require('./retrieve-fav-games'),
-  togglePlayingGame: require('./toggle-playing-game'),
+  addFavGame: require('./add-fav-game'),
+  deleteFavGame: require('./delete-fav-game'),
   retrievePlayingGames: require('./retrieve-playing-games'),
-  togglePlayedGame: require('./toggle-played-game'),
-  retrievePlayedGames: require('./retrieve-played-games')
+  addPlayingGame: require('./add-playing-game'),
+  deletePlayingGame: require('./delete-playing-game'),
+  retrievePlayedGames: require('./retrieve-played-games'),
+  addPlayedGame: require('./add-played-game'),
+  deletePlayedGame: require('./delete-played-game')
 }

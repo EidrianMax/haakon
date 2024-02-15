@@ -3,20 +3,19 @@ const { NotFoundError, CredentialsError } = require('@haakon/api-errors')
 const { validateId, validatePassword } = require('./helpers/validators')
 const bcrypt = require('bcryptjs')
 
-function unregisterUser (id, password) {
+async function unregisterUser (id, password) {
   validateId(id)
   validatePassword(password)
 
-  return (async () => {
-    const user = await User.findById(id)
+  const user = await User.findById(id)
 
-    if (!user) throw new NotFoundError(`user with id ${id} not found`)
+  if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-    if (!bcrypt.compareSync(password, user.password)) throw new CredentialsError('Wrong password')
+  const isMatchPassword = await bcrypt.compare(password, user.password)
 
-    await user.delete(id)
+  if (!isMatchPassword) throw new CredentialsError('Wrong password')
 
-    return ('User deleted successfully')
-  })()
+  await User.findByIdAndDelete(id)
 }
+
 module.exports = unregisterUser

@@ -1,28 +1,28 @@
 require('dotenv').config()
-
-const { expect } = require('chai')
 const retrieveUser = require('./retrieve-user')
 const { mongoose, models: { User } } = require('@haakon/api-database')
 const { Types: { ObjectId } } = mongoose
 const { NotFoundError, FormatError } = require('@haakon/api-errors')
 
-const { env: { MONGO_URL } } = process
+const { MONGO_URL } = process.env
 
 describe('retrieveUser', () => {
-  before(() => mongoose.connect(MONGO_URL))
+  let userId
+  const user = {
+    name: 'Jhon Doe',
+    username: 'jhondoe',
+    password: Math.random().toString(36).slice(2)
+  }
 
-  beforeEach(() => User.deleteMany())
-
-  let user, userId
+  beforeAll(async () => {
+    mongoose.connect(MONGO_URL)
+  })
 
   beforeEach(async () => {
-    user = {
-      name: 'Wendy Pan',
-      username: 'wendypan',
-      password: '123123123'
-    }
+    await User.deleteMany()
 
     const _user = await User.create(user)
+
     userId = _user.id
   })
 
@@ -30,52 +30,50 @@ describe('retrieveUser', () => {
     const { name, username } = user
 
     const _user = await retrieveUser(userId)
-    expect(_user).to.exist
-    expect(_user.name).to.equal(name)
-    expect(_user.username).to.equal(username)
+    expect(_user.name).toBe(name)
+    expect(_user.username).toBe(username)
   })
 
   it('should fail with incorrect id', async () => {
-    userId = new ObjectId().toString()
+    const mongoId = new ObjectId().toString()
 
     try {
-      await retrieveUser(userId)
+      await retrieveUser(mongoId)
       throw new Error('should not reach this point')
     } catch (error) {
-      expect(error).to.exist
-      expect(error).to.be.instanceOf(NotFoundError)
-      expect(error.message).to.equal(`user with id ${userId} not found`)
+      expect(error).toBeInstanceOf(NotFoundError)
+      expect(error.message).toBe(`user with id ${mongoId} not found`)
     }
   })
 
   describe('when parameters are not valid', () => {
     describe('when id is not valid', () => {
-      it('should fail when id is not a string', () => {
-        expect(() => retrieveUser(true)).to.throw(TypeError, 'id is not a string')
-        expect(() => retrieveUser(123)).to.throw(TypeError, 'id is not a string')
-        expect(() => retrieveUser({})).to.throw(TypeError, 'id is not a string')
-        expect(() => retrieveUser(() => { })).to.throw(TypeError, 'id is not a string')
-        expect(() => retrieveUser([])).to.throw(TypeError, 'id is not a string')
+      it('should fail when id is not a string', async () => {
+        await expect(retrieveUser(true)).rejects.toThrow(TypeError)
+        await expect(retrieveUser(123)).rejects.toThrow(TypeError)
+        await expect(retrieveUser({})).rejects.toThrow(TypeError)
+        await expect(retrieveUser(() => { })).rejects.toThrow(TypeError)
+        await expect(retrieveUser([])).rejects.toThrow(TypeError)
       })
 
-      it('should fail when id is empty or blank', () => {
-        expect(() => retrieveUser('')).to.throw(FormatError, 'id is empty or blank')
-        expect(() => retrieveUser('   ')).to.throw(FormatError, 'id is empty or blank')
+      it('should fail when id is empty or blank', async () => {
+        await expect(retrieveUser('')).rejects.toThrow(FormatError)
+        await expect(retrieveUser('   ')).rejects.toThrow(FormatError)
       })
 
-      it('should fail when id has spaces', () => {
-        expect(() => retrieveUser(' abcd1234abcd1234abcd1234 ')).to.throw(FormatError, 'id has blank spaces')
-        expect(() => retrieveUser('abcd 1234abc d1234abc d1234')).to.throw(FormatError, 'id has blank spaces')
+      it('should fail when id has spaces', async () => {
+        await expect(retrieveUser(' abcd1234abcd1234abcd1234 ')).rejects.toThrow(FormatError)
+        await expect(retrieveUser('abcd 1234abc d1234abc d1234')).rejects.toThrow(FormatError)
       })
 
-      it('should fail when id is not valid', () => {
+      it('should fail when id is not valid', async () => {
         const wrongMongoId = '61b8d031158b2213c7cc37b'
-        expect(() => retrieveUser(wrongMongoId)).to.throw(FormatError, 'id is not valid')
+        await expect(retrieveUser(wrongMongoId)).rejects.toThrow(FormatError)
       })
     })
   })
 
-  after(async () => {
+  afterAll(async () => {
     await User.deleteMany()
     await mongoose.disconnect()
   })

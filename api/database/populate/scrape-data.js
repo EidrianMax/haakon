@@ -1,19 +1,17 @@
-require('dotenv').config()
+require('dotenv').config({
+  path: `./.env.${process.env.NODE_ENV}`
+})
 const mongoose = require('mongoose')
 const { models: { Game, Platform, Genre } } = require('../index')
 const scrapeGenres = require('./scrape-genres')
 const scrapePlatforms = require('./scrape-platforms')
 const scrapeGame = require('./scrape-game')
 
-const { NODE_ENV, MONGO_DB_URI, MONGO_DB_URI_DEV } = process.env
-
-const URI = NODE_ENV === 'development'
-  ? MONGO_DB_URI_DEV
-  : MONGO_DB_URI
+const { MONGO_DB_URI } = process.env
 
 ;(async () => {
   try {
-    await mongoose.connect(URI)
+    await mongoose.connect(MONGO_DB_URI)
 
     await Platform.deleteMany()
     await Game.deleteMany()

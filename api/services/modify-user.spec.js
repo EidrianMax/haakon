@@ -1,6 +1,4 @@
 require('dotenv').config()
-
-const { expect } = require('chai')
 const modifyUser = require('./modify-user')
 const { mongoose, models: { User } } = require('@haakon/api-database')
 const { Types: { ObjectId } } = mongoose
@@ -10,251 +8,246 @@ const bcrypt = require('bcryptjs')
 const { env: { MONGO_URL } } = process
 
 describe('modifyUser', () => {
-  before(() => mongoose.connect(MONGO_URL))
+  let userId
+  const user = {
+    name: 'Wendy Pan',
+    username: 'wendypan',
+    password: Math.random().toString().slice(2)
+  }
 
-  beforeEach(() => User.deleteMany())
-
-  let user, userId
+  beforeAll(async () => {
+    await mongoose.connect(MONGO_URL)
+  })
 
   beforeEach(async () => {
-    user = {
-      name: 'Wendy Pan',
-      username: 'wendypan',
-      password: '123123123'
-    }
+    await User.deleteMany()
 
-    const _user = await User.create({ ...user, password: bcrypt.hashSync(user.password) })
+    const _user = await User.create({
+      ...user,
+      password: bcrypt.hashSync(user.password)
+    })
+
     userId = _user.id
   })
 
-  it('should succeed updating name and username on a pre-existing user', async () => {
-    let { name, username } = user
+  it('should succeed if update name and username', async () => {
+    const dataToUpdate = {
+      name: 'Ervin Howell',
+      username: 'Antonette'
+    }
 
-    name += '-updated'
-    username += '-updated'
-
-    const data = { name, username }
-
-    const res = await modifyUser(userId, data)
-    expect(res).to.be.undefined
+    const res = await modifyUser(userId, dataToUpdate)
+    expect(res).toBeUndefined()
     const _user = await User.findById(userId)
-    expect(_user.name).to.equal(name)
-    expect(_user.username).to.equal(username)
+    expect(_user.name).toBe(dataToUpdate.name)
+    expect(_user.username).toBe(dataToUpdate.username)
   })
 
-  it('should succeed updating password on a pre-existing user', async () => {
-    const { password: oldPassword } = user
+  it('should succeed if update password', async () => {
+    const dataToUpdate = {
+      oldPassword: user.password,
+      password: Math.random().toString().slice(2)
+    }
 
-    const password = oldPassword + '-updated'
+    const res = await modifyUser(userId, dataToUpdate)
+    expect(res).toBeUndefined()
 
-    const data = { oldPassword, password }
-
-    const res = await modifyUser(userId, data)
-    expect(res).to.be.undefined
     const _user = await User.findById(userId)
-    return expect(bcrypt.compareSync(password, _user.password)).to.be.true
+    const isMatchPassword = bcrypt.compareSync(dataToUpdate.password, _user.password)
+    expect(isMatchPassword).toBe(true)
   })
 
   it('should fail updating password on a pre-existing user when old password is wrong', async () => {
-    let { password: oldPassword } = user
-
-    const password = oldPassword + '-updated'
-
-    oldPassword += '-wrong'
-
-    const data = { oldPassword, password }
+    const dataToUpdate = {
+      oldPassword: Math.random().toString().slice(2),
+      password: Math.random().toString().slice(2)
+    }
 
     try {
-      await modifyUser(userId, data)
+      await modifyUser(userId, dataToUpdate)
       throw new Error('should not reach this point')
     } catch (error) {
-      expect(error).to.exist
-      expect(error).to.be.instanceOf(CredentialsError)
-      expect(error.message).to.equal('wrong password')
+      expect(error).toBeInstanceOf(CredentialsError)
+      expect(error.message).toBe('wrong password')
     }
   })
 
   describe('when another user already exists', () => {
-    let user2
+    const user2 = {
+      name: 'Peter Pan',
+      username: 'peterpan',
+      password: '123123123'
+    }
 
     beforeEach(async () => {
-      user2 = {
-        name: 'Peter Pan',
-        username: 'peterpan',
-        password: '123123123'
-      }
-
       await User.create(user2)
     })
 
     it('should fail on updating username to a one that already exists', async () => {
-      const username = user2.username
+      const { username } = user2
 
       try {
         await modifyUser(userId, { username })
         throw new Error('should not reach this point')
       } catch (error) {
-        expect(error).to.exist
-        expect(error).to.be.instanceOf(ConflictError)
-        expect(error.message).to.equal(`user with username ${username} already exists`)
+        expect(error).toBeInstanceOf(ConflictError)
+        expect(error.message).toBe(`user with username ${username} already exists`)
       }
     })
   })
 
   it('should fail when user id does not correspond to any user', async () => {
-    const userId = ObjectId().toString()
+    const userId = new ObjectId().toString()
 
     try {
       await modifyUser(userId, {})
       throw new Error('should not reach this point')
     } catch (error) {
-      expect(error).to.exist
-      expect(error).to.be.instanceOf(NotFoundError)
-      expect(error.message).to.equal(`user with id ${userId} not found`)
+      expect(error).toBeInstanceOf(NotFoundError)
+      expect(error.message).toBe(`user with id ${userId} not found`)
     }
   })
 
   describe('when parameters are not valid', () => {
     describe('when id is not valid', () => {
-      it('should fail when id is not a string', () => {
-        expect(() => modifyUser(true, {})).to.throw(TypeError, 'id is not a string')
-        expect(() => modifyUser(123, {})).to.throw(TypeError, 'id is not a string')
-        expect(() => modifyUser({}, {})).to.throw(TypeError, 'id is not a string')
-        expect(() => modifyUser(() => { }, {})).to.throw(TypeError, 'id is not a string')
-        expect(() => modifyUser([], {})).to.throw(TypeError, 'id is not a string')
+      it('should fail when id is not a string', async () => {
+        await expect(modifyUser(true, {})).rejects.toThrow(TypeError)
+        await expect(modifyUser(123, {})).rejects.toThrow(TypeError)
+        await expect(modifyUser({}, {})).rejects.toThrow(TypeError)
+        await expect(modifyUser(() => { }, {})).rejects.toThrow(TypeError)
+        await expect(modifyUser([], {})).rejects.toThrow(TypeError)
       })
 
-      it('should fail when id is empty or blank', () => {
-        expect(() => modifyUser('', {})).to.throw(FormatError, 'id is empty or blank')
-        expect(() => modifyUser('   ', {})).to.throw(FormatError, 'id is empty or blank')
+      it('should fail when id is empty or blank', async () => {
+        await expect(modifyUser('', {})).rejects.toThrow(FormatError)
+        await expect(modifyUser('   ', {})).rejects.toThrow(FormatError)
       })
 
-      it('should fail when id has spaces', () => {
-        expect(() => modifyUser(' abcd1234abcd1234abcd1234 ', {})).to.throw(FormatError, 'id has blank spaces')
-        expect(() => modifyUser('abcd 1234abc d1234abc d1234', {})).to.throw(FormatError, 'id has blank spaces')
+      it('should fail when id has spaces', async () => {
+        await expect(modifyUser(' abcd1234abcd1234abcd1234 ', {})).rejects.toThrow(FormatError)
+        await expect(modifyUser('abcd 1234abc d1234abc d1234', {})).rejects.toThrow(FormatError)
       })
 
-      it('should fail when id is not valid', () => {
+      it('should fail when id is not valid', async () => {
         const wrongMongoId = '61b8d031158b2213c7cc37b'
-        expect(() => modifyUser(wrongMongoId)).to.throw(FormatError, 'id is not valid')
+        await expect(modifyUser(wrongMongoId)).rejects.toThrow(FormatError)
       })
     })
 
     describe('when data is not valid', () => {
-      it('should fail when data is not an object', () => {
-        expect(() => modifyUser('abcd1234abcd1234abcd1234', true)).to.throw(TypeError, 'data is not an object')
-        expect(() => modifyUser('abcd1234abcd1234abcd1234', 123)).to.throw(TypeError, 'data is not an object')
-        expect(() => modifyUser('abcd1234abcd1234abcd1234', () => { })).to.throw(TypeError, 'data is not an object')
-        expect(() => modifyUser('abcd1234abcd1234abcd1234', '...')).to.throw(TypeError, 'data is not an object')
-        expect(() => modifyUser('abcd1234abcd1234abcd1234', [])).to.throw(TypeError, 'data is not an object')
+      it('should fail when data is not an object', async () => {
+        await expect(modifyUser('abcd1234abcd1234abcd1234', true)).rejects.toThrow(TypeError)
+        await expect(modifyUser('abcd1234abcd1234abcd1234', 123)).rejects.toThrow(TypeError)
+        await expect(modifyUser('abcd1234abcd1234abcd1234', () => { })).rejects.toThrow(TypeError)
+        await expect(modifyUser('abcd1234abcd1234abcd1234', '')).rejects.toThrow(TypeError)
       })
     })
 
     describe('when properties in data are not valid', () => {
       describe('when name is not valid', () => {
-        it('should fail when name is not a string', () => {
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { name: true })).to.throw(TypeError, 'name is not a string')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { name: 123 })).to.throw(TypeError, 'name is not a string')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { name: {} })).to.throw(TypeError, 'name is not a string')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { name: () => { } })).to.throw(TypeError, 'name is not a string')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { name: [] })).to.throw(TypeError, 'name is not a string')
+        it('should fail when name is not a string', async () => {
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { name: true })).rejects.toThrow(TypeError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { name: 123 })).rejects.toThrow(TypeError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { name: {} })).rejects.toThrow(TypeError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { name: () => { } })).rejects.toThrow(TypeError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { name: [] })).rejects.toThrow(TypeError)
         })
 
-        it('should fail when name is empty', () => {
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { name: '' })).to.throw(FormatError, 'name is empty or blank')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { name: '   ' })).to.throw(FormatError, 'name is empty or blank')
+        it('should fail when name is empty', async () => {
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { name: '' })).rejects.toThrow(FormatError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { name: '   ' })).rejects.toThrow(FormatError)
         })
 
-        it('should fail when name has spaces around', () => {
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { name: ' Wendy Pan ' })).to.throw(FormatError, 'blank spaces around name')
+        it('should fail when name has spaces around', async () => {
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { name: ' Wendy Pan ' })).rejects.toThrow(FormatError)
         })
       })
 
       describe('when username is not valid', () => {
-        it('should fail when username is not a string', () => {
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { username: true })).to.throw(TypeError, 'username is not a string')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { username: 123 })).to.throw(TypeError, 'username is not a string')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { username: {} })).to.throw(TypeError, 'username is not a string')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { username: () => { } })).to.throw(TypeError, 'username is not a string')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { username: [] })).to.throw(TypeError, 'username is not a string')
+        it('should fail when username is not a string', async () => {
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { username: true })).rejects.toThrow(TypeError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { username: 123 })).rejects.toThrow(TypeError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { username: {} })).rejects.toThrow(TypeError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { username: () => { } })).rejects.toThrow(TypeError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { username: [] })).rejects.toThrow(TypeError)
         })
 
-        it('should fail when username is empty', () => {
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { username: '' })).to.throw(FormatError, 'username is empty or blank')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { username: '   ' })).to.throw(FormatError, 'username is empty or blank')
+        it('should fail when username is empty', async () => {
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { username: '' })).rejects.toThrow(FormatError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { username: '   ' })).rejects.toThrow(FormatError)
         })
 
-        it('should fail when username has spaces', () => {
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { username: ' wendypan ' })).to.throw(FormatError, 'username has blank spaces')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { username: 'wendy pan' })).to.throw(FormatError, 'username has blank spaces')
+        it('should fail when username has spaces', async () => {
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { username: ' wendypan ' })).rejects.toThrow(FormatError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { username: 'wendy pan' })).rejects.toThrow(FormatError)
         })
 
-        it('should fail when username length is less that 4 characters', () => {
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { username: 'wp' })).to.throw(FormatError, 'username has less than 4 characters')
+        it('should fail when username length is less that 4 characters', async () => {
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { username: 'wp' })).rejects.toThrow(FormatError)
         })
       })
 
       describe('when password is not valid', () => {
-        it('should fail when password is not a string', () => {
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123', password: true })).to.throw(TypeError, 'password is not a string')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123', password: 123 })).to.throw(TypeError, 'password is not a string')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123', password: {} })).to.throw(TypeError, 'password is not a string')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123', password: () => { } })).to.throw(TypeError, 'password is not a string')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123', password: [] })).to.throw(TypeError, 'password is not a string')
+        it('should fail when password is not a string', async () => {
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123', password: true })).rejects.toThrow(TypeError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123', password: 123 })).rejects.toThrow(TypeError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123', password: {} })).rejects.toThrow(TypeError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123', password: () => { } })).rejects.toThrow(TypeError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123', password: [] })).rejects.toThrow(TypeError)
         })
 
-        it('should fail when password is empty', () => {
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123', password: '' })).to.throw(FormatError, 'password is empty or blank')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123', password: '   ' })).to.throw(FormatError, 'password is empty or blank')
+        it('should fail when password is empty', async () => {
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123', password: '' })).rejects.toThrow(FormatError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123', password: '   ' })).rejects.toThrow(FormatError)
         })
 
-        it('should fail when password has spaces', () => {
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123', password: ' 123123123 ' })).to.throw(FormatError, 'password has blank spaces')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123', password: '123 123 123' })).to.throw(FormatError, 'password has blank spaces')
+        it('should fail when password has spaces', async () => {
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123', password: ' 123123123 ' })).rejects.toThrow(FormatError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123', password: '123 123 123' })).rejects.toThrow(FormatError)
         })
 
-        it('should fail when password length is less that 8 characters', () => {
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123', password: '123123' })).to.throw(FormatError, 'password has less than 8 characters')
+        it('should fail when password length is less that 8 characters', async () => {
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123', password: '123123' })).rejects.toThrow(FormatError)
         })
       })
 
       describe('when old password is not valid', () => {
-        it('should fail when password is not a string', () => {
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { password: '123123123', oldPassword: true })).to.throw(TypeError, 'password is not a string')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { password: '123123123', oldPassword: 123 })).to.throw(TypeError, 'password is not a string')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { password: '123123123', oldPassword: {} })).to.throw(TypeError, 'password is not a string')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { password: '123123123', oldPassword: () => { } })).to.throw(TypeError, 'password is not a string')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { password: '123123123', oldPassword: [] })).to.throw(TypeError, 'password is not a string')
+        it('should fail when password is not a string', async () => {
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { password: '123123123', oldPassword: true })).rejects.toThrow(TypeError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { password: '123123123', oldPassword: 123 })).rejects.toThrow(TypeError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { password: '123123123', oldPassword: {} })).rejects.toThrow(TypeError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { password: '123123123', oldPassword: () => { } })).rejects.toThrow(TypeError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { password: '123123123', oldPassword: [] })).rejects.toThrow(TypeError)
         })
 
-        it('should fail when password is empty', () => {
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { password: '123123123', oldPassword: '' })).to.throw(FormatError, 'password is empty or blank')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { password: '123123123', oldPassword: '   ' })).to.throw(FormatError, 'password is empty or blank')
+        it('should fail when password is empty', async () => {
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { password: '123123123', oldPassword: '' })).rejects.toThrow(FormatError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { password: '123123123', oldPassword: '   ' })).rejects.toThrow(FormatError)
         })
 
-        it('should fail when password has spaces', () => {
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { password: '123123123', oldPassword: ' 123123123 ' })).to.throw(FormatError, 'password has blank spaces')
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { password: '123123123', oldPassword: '123 123 123' })).to.throw(FormatError, 'password has blank spaces')
+        it('should fail when password has spaces', async () => {
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { password: '123123123', oldPassword: ' 123123123 ' })).rejects.toThrow(FormatError)
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { password: '123123123', oldPassword: '123 123 123' })).rejects.toThrow(FormatError)
         })
 
-        it('should fail when password length is less that 8 characters', () => {
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { password: '123123123', oldPassword: '123123' })).to.throw(FormatError, 'password has less than 8 characters')
+        it('should fail when password length is less that 8 characters', async () => {
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { password: '123123123', oldPassword: '123123' })).rejects.toThrow(FormatError)
         })
       })
 
       describe('when password or old password is not present', () => {
-        it('should fail when password is present and old password not', () => {
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { password: '123123123' })).to.throw(ConflictError, 'old password is not defined')
+        it('should fail when password is present and old password not', async () => {
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { password: '123123123' })).rejects.toThrow(ConflictError)
         })
 
-        it('should fail when old password is present and password not', () => {
-          expect(() => modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123' })).to.throw(ConflictError, 'password is not defined')
+        it('should fail when old password is present and password not', async () => {
+          await expect(modifyUser('abcd1234abcd1234abcd1234', { oldPassword: '123123123' })).rejects.toThrow(ConflictError)
         })
       })
     })
   })
 
-  after(async () => {
+  afterAll(async () => {
     await User.deleteMany()
     await mongoose.disconnect()
   })

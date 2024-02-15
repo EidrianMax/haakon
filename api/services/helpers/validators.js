@@ -65,6 +65,12 @@ function validateQuery (query) {
   if (!query.trim().length) throw new FormatError('query is empty or blank')
 }
 
+function validateProperty (property) {
+  if (typeof property !== 'string') throw new TypeError('property is not a string')
+  if (!property.trim().length) throw new FormatError('name is empty or blank')
+  if (property.trim() !== property) throw new FormatError('blank spaces around name')
+}
+
 module.exports = {
   validateId,
   validateUsername,
@@ -72,5 +78,6 @@ module.exports = {
   validateOldPassword,
   validateData,
   validateName,
-  validateQuery
+  validateQuery,
+  validateProperty
 }
