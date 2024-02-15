@@ -30,6 +30,7 @@ async function modifyUser (id, data) {
   }
 
   try {
+    // TODO return new user modify
     await user.save()
   } catch (error) {
     if (error.code === 11000) {
