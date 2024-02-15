@@ -1,12 +1,12 @@
 const { registerUser } = require('@haakon/api-services')
 
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
   const { body: { name, username, password } } = req
 
   try {
-    registerUser(name, username, password)
-      .then(() => res.status(201).send())
-      .catch(next)
+    const userRegistered = await registerUser(name, username, password)
+
+    res.status(201).json(userRegistered)
   } catch (error) {
     next(error)
   }
