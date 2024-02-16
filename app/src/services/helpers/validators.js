@@ -1,11 +1,9 @@
-const { FormatError, ConflictError } = require('@haakon/api-errors')
-const { mongoose } = require('@haakon/api-database')
+import { FormatError, ConflictError } from '@haakon/app-errors'
 
 function validateId (id) {
   if (typeof id !== 'string') throw new TypeError('id is not a string')
   if (!id.trim().length) throw new FormatError('id is empty or blank')
   if (/\r?\n|\r|\t| /g.test(id)) throw new FormatError('id has blank spaces')
-  if (!mongoose.isValidObjectId(id)) throw new FormatError('id is not valid')
 }
 
 function validateUsername (username) {
