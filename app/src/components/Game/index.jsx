@@ -7,14 +7,14 @@ import togglePlayedGame from '../../services/toggle-played-game'
 import Tooltip from '../Tooltip'
 import { Link } from 'wouter'
 
-export default function Game ({ id, name, backgroundImage, platforms, genres, ...props }) {
+export default function Game ({ id, name, backgroundImage, platforms, genres }) {
   const { token, user, favGames, aggregateFavGame, removeFavGame } = useUser()
   const { showLoading, hideLoading, showModal } = useApp()
   const [tooltip, setTooltip] = useState(false)
   const [isPlayingGame, setIsPlayingGame] = useState(false)
   const [isPlayedGame, setIsPlayedGame] = useState(false)
 
-  const isFav = favGames.some(favGame => favGame._id === props._id)
+  const isFav = favGames.some(favGame => favGame._id === id)
 
   useEffect(() => {
     const isPlayingGame = user?.playingGames?.some(playingId => playingId === id)
@@ -26,10 +26,10 @@ export default function Game ({ id, name, backgroundImage, platforms, genres, ..
 
   const onFavGame = () => {
     if (!isFav) {
-      return aggregateFavGame(props._id)
+      return aggregateFavGame(id)
     }
 
-    removeFavGame(props._id)
+    removeFavGame(id)
   }
 
   const onPlayingGame = async () => {

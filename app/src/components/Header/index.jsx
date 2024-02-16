@@ -10,6 +10,8 @@ export default function Header ({ showAside, user }) {
     const { query } = Object.fromEntries(new FormData(event.target))
 
     setLocation(`/games/search/${query}`)
+
+    event.target.reset()
   }
 
   return (

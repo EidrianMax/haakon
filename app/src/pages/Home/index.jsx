@@ -14,7 +14,7 @@ import retrieveFavGames from '../../services/retrieve-fav-games'
 
 export default function Home () {
   const { games } = useGames(null)
-  const { user, favGames } = useUser()
+  const { user } = useUser()
   const [aside, setAside] = useState(false)
 
   const showAside = () => setAside(true)
@@ -26,7 +26,7 @@ export default function Home () {
       {aside && <Aside hideAside={hideAside} />}
 
       <Switch>
-        <Route path='/'><AllGames games={games} favGames={favGames} /></Route>
+        <Route path='/'><AllGames games={games} /></Route>
         <Route path='/games/search/:query'><SearchGames games={games} /></Route>
         <Route path='/games/:gameId' component={GameDetail} />
         <Route path={`/@${user?.username}`} component={MyLibary} />
