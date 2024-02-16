@@ -9,7 +9,7 @@ module.exports = async (req, res, next) => {
       const games = await retrieveAllGames()
 
       // FIXME toJson from schema game
-      res.json(games)
+      return res.json(games)
     }
 
     const games = await searchGames(q)
