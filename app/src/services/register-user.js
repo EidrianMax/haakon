@@ -6,9 +6,9 @@ import { API_URL } from './constants'
  * @param {string} name The full name of the user to be registered.
  * @param {string} username The username of the user to be registered.
  * @param {string} password The password of the user to be registered.
- *
  * @throws {TypeError} When any of the arguments does not match the correct type.
  * @throws {Error} When any of the arguments does not contain the correct format.
+ * @returns User registered
  */
 
 export default async function registerUser (name, username, password) {
@@ -37,7 +37,9 @@ export default async function registerUser (name, username, password) {
   const { status } = res
 
   if (status === 201) {
-    return
+    const user = await res.json()
+
+    return user
   }
 
   if (status === 409 || status === 400) {
