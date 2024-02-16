@@ -2,43 +2,27 @@ import { useEffect, useState } from 'react'
 import useApp from '../../hooks/useApp'
 import useUser from '../../hooks/useUser'
 import './index.css'
-import toggleFavGame from '../../services/toggle-fav-game'
 import togglePlayingGame from '../../services/toggle-playing-game'
 import togglePlayedGame from '../../services/toggle-played-game'
 import Tooltip from '../Tooltip'
 import { Link } from 'wouter'
 
 export default function Game ({ id, name, backgroundImage, platforms, genres, ...props }) {
-  const { token, user } = useUser()
+  const { token, user, favGames, aggregateFavGame } = useUser()
   const { showLoading, hideLoading, showModal } = useApp()
   const [tooltip, setTooltip] = useState(false)
-  const [isFavGame, setIsFavGame] = useState(false)
   const [isPlayingGame, setIsPlayingGame] = useState(false)
   const [isPlayedGame, setIsPlayedGame] = useState(false)
 
-  useEffect(() => {
-    const isFavGame = user?.favGames?.some(favId => favId === id)
-    setIsFavGame(isFavGame)
+  const isFav = favGames.some(favGame => favGame._id === props._id)
 
+  useEffect(() => {
     const isPlayingGame = user?.playingGames?.some(playingId => playingId === id)
     setIsPlayingGame(isPlayingGame)
 
     const isPlayedGame = user?.playedGames?.some(playedId => playedId === id)
     setIsPlayedGame(isPlayedGame)
   }, [])
-
-  const onFavGame = async () => {
-    try {
-      showLoading()
-      await toggleFavGame(token, id)
-      setIsFavGame(!isFavGame)
-      hideLoading()
-    } catch ({ message }) {
-      showModal({ message, variant: 'error' })
-    } finally {
-      hideLoading()
-    }
-  }
 
   const onPlayingGame = async () => {
     try {
@@ -87,8 +71,6 @@ export default function Game ({ id, name, backgroundImage, platforms, genres, ..
 
   const noRepeated = Array.from(new Set(platformsMapped))
 
-  console.log(noRepeated)
-
   return (
     <li className='Game'>
       <header className='Game-header'>
@@ -98,8 +80,8 @@ export default function Game ({ id, name, backgroundImage, platforms, genres, ..
           src={backgroundImage}
           alt={name}
         />
-        <button className='Game-fav' onClick={onFavGame}>
-          <i className={`${isFavGame ? 'fa' : 'far'} fa-heart`} />
+        <button className='Game-fav' onClick={() => aggregateFavGame(props._id)}>
+          <i className={`${isFav ? 'fa' : 'far'} fa-heart`} />
         </button>
       </header>
 

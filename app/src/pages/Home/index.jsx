@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Route, Switch } from 'wouter'
 import Header from '../../components/Header'
 import GameDetail from '../GameDetail'
@@ -10,10 +10,11 @@ import NotFound from '../NotFound'
 import useGames from '../../hooks/useGames'
 import useUser from '../../hooks/useUser'
 import Settings from '../Settings'
+import retrieveFavGames from '../../services/retrieve-fav-games'
 
 export default function Home () {
   const { games } = useGames(null)
-  const { user } = useUser()
+  const { user, favGames } = useUser()
   const [aside, setAside] = useState(false)
 
   const showAside = () => setAside(true)
@@ -25,7 +26,7 @@ export default function Home () {
       {aside && <Aside hideAside={hideAside} />}
 
       <Switch>
-        <Route path='/'><AllGames games={games} /></Route>
+        <Route path='/'><AllGames games={games} favGames={favGames} /></Route>
         <Route path='/games/search/:query'><SearchGames games={games} /></Route>
         <Route path='/games/:gameId' component={GameDetail} />
         <Route path={`/@${user?.username}`} component={MyLibary} />

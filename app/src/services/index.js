@@ -13,6 +13,7 @@ import togglePlayingGame from './toggle-playing-game'
 import retrievePlayingGames from './retrieve-playing-games'
 import togglePlayedGame from './toggle-played-game'
 import retrievePlayedGames from './retrieve-played-games'
+import addFavGame from './add-fav-game'
 
 import context from './context'
 
@@ -32,5 +33,6 @@ export {
   retrievePlayingGames,
   togglePlayedGame,
   retrievePlayedGames,
+  addFavGame,
   context
 }

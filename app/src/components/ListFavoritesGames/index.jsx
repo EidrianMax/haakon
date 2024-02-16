@@ -3,44 +3,25 @@ import { useContext, useEffect, useState } from 'react'
 import AppContext from '../../context/AppContext'
 import { retrieveFavGames } from '../../services'
 import FavoriteGame from '../FavoriteGame'
+import { UserContext } from '../../context/UserContext'
 
 const ListFavoritesGames = () => {
   const { showSpinner, hideSpinner, showModal } = useContext(AppContext)
-
-  const [games, setGames] = useState([])
-  const [isFav, setIsFav] = useState(false)
-
-  useEffect(() => {
-    (async () => {
-      try {
-        showSpinner()
-        const games = await retrieveFavGames(sessionStorage.token)
-
-        setGames(games)
-
-        hideSpinner()
-      } catch ({ message }) {
-        showModal(message)
-        hideSpinner()
-      }
-    })()
-  }, [isFav])
+  const { favGames } = useContext(UserContext)
 
   return (
     <>
       {
-        games && games.length
+        favGames && favGames.length
           ? (
             <ul className='libraryGameCards'>
               {
-                games.map(({ id, backgroundImage, name }) =>
+                favGames.map(({ id, backgroundImage, name }) =>
                   <FavoriteGame
                     key={id}
                     id={id}
                     backgroundImage={backgroundImage}
                     name={name}
-                    isFav={isFav}
-                    setIsFav={setIsFav}
                   />)
                 }
             </ul>
