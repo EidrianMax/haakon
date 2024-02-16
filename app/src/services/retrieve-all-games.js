@@ -1,21 +1,21 @@
 import { API_URL } from './constants'
 
 /**
- * Retrieve all games in data base.
+ * Retrieve all games.
  */
 
 export default async function retrieveAllGames () {
-  const res = await fetch(`${API_URL}/games/all`, {
+  const res = await fetch(`${API_URL}/games`, {
     method: 'GET'
   })
 
-  const { status } = res
-
-  if (status === 200) {
-    return await res.json()
-  } else if (status === 409 || status === 400) {
+  if (!res.ok) {
     const { error } = await res.json()
 
     throw new Error(error)
-  } else throw new Error('unknown error')
+  }
+
+  const games = await res.json()
+
+  return games
 }

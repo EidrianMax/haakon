@@ -1,7 +1,7 @@
 const { searchGames, retrieveAllGames } = require('@haakon/api-services')
 
 module.exports = async (req, res, next) => {
-  const { query: { q } } = req
+  const q = req?.query?.q
 
   // TODO integrate retrieveAllGames to searchGame
   try {
