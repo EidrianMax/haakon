@@ -4,10 +4,11 @@ import AppContext from '../../context/AppContext'
 import { retrieveFavGames } from '../../services'
 import FavoriteGame from '../FavoriteGame'
 import { UserContext } from '../../context/UserContext'
+import useUser from '../../hooks/useUser'
 
 const ListFavoritesGames = () => {
   const { showSpinner, hideSpinner, showModal } = useContext(AppContext)
-  const { favGames } = useContext(UserContext)
+  const { favGames } = useUser()
 
   return (
     <>

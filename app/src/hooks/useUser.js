@@ -4,7 +4,7 @@ import useApp from './useApp'
 import authenticateUser from '../services/authenticate-user'
 import registerUser from '../services/register-user'
 import { useLocation } from 'wouter'
-import { addFavGame } from '../services'
+import { addFavGame, deleteFavGame } from '../services'
 
 export default function useUser () {
   const { token, setToken, user, favGames, setFavGames } = useContext(UserContext)
@@ -57,5 +57,18 @@ export default function useUser () {
     }
   }
 
-  return { token, setToken, user, login, register, logout, favGames, aggregateFavGame }
+  const removeFavGame = async (gameId) => {
+    try {
+      showLoading()
+      const favGames = await deleteFavGame(token, gameId)
+      setFavGames(favGames)
+      hideLoading()
+    } catch ({ message }) {
+      showModal({ message, variant: 'error' })
+    } finally {
+      hideLoading()
+    }
+  }
+
+  return { token, setToken, user, login, register, logout, aggregateFavGame, removeFavGame, favGames }
 }

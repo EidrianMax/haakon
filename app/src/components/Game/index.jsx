@@ -8,7 +8,7 @@ import Tooltip from '../Tooltip'
 import { Link } from 'wouter'
 
 export default function Game ({ id, name, backgroundImage, platforms, genres, ...props }) {
-  const { token, user, favGames, aggregateFavGame } = useUser()
+  const { token, user, favGames, aggregateFavGame, removeFavGame } = useUser()
   const { showLoading, hideLoading, showModal } = useApp()
   const [tooltip, setTooltip] = useState(false)
   const [isPlayingGame, setIsPlayingGame] = useState(false)
@@ -23,6 +23,14 @@ export default function Game ({ id, name, backgroundImage, platforms, genres, ..
     const isPlayedGame = user?.playedGames?.some(playedId => playedId === id)
     setIsPlayedGame(isPlayedGame)
   }, [])
+
+  const onFavGame = () => {
+    if (!isFav) {
+      return aggregateFavGame(props._id)
+    }
+
+    removeFavGame(props._id)
+  }
 
   const onPlayingGame = async () => {
     try {
@@ -80,7 +88,7 @@ export default function Game ({ id, name, backgroundImage, platforms, genres, ..
           src={backgroundImage}
           alt={name}
         />
-        <button className='Game-fav' onClick={() => aggregateFavGame(props._id)}>
+        <button className='Game-fav' onClick={onFavGame}>
           <i className={`${isFav ? 'fa' : 'far'} fa-heart`} />
         </button>
       </header>

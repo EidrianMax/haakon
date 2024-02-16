@@ -12,6 +12,7 @@ export function UserContextProvider ({ children }) {
   const { goToHome, showModal, goToLanding, showLoading, hideLoading } = useApp(AppContext)
   const [, navigate] = useLocation()
   const [favGames, setFavGames] = useState([])
+  console.log(favGames)
 
   useEffect(() => {
     if (!token) {
