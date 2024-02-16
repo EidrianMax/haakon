@@ -5,18 +5,23 @@ import { Redirect } from 'wouter'
 
 export default function GameDetail ({ params: { gameId } }) {
   const { gameDetail, loading, onFav, isFav, hasError } = useGifDetail({ gameId })
-  console.log(isFav)
 
   const {
     name, released, description, screenshots,
     platforms, genres, score, website
   } = gameDetail
 
+  const formatDate = date => {
+    const newDate = new Date(date)
+
+    return newDate.toLocaleDateString()
+  }
+
   return (
     <>
       <div className='gameDetail'>
         <div className='gameDetail__row'>
-          <div className='releasedDate gameDetail__releasedDate'><time>{released}</time></div>
+          <div className='releasedDate gameDetail__releasedDate'><time>{formatDate(released)}</time></div>
           <div className='score'>{score}</div>
           <button className='btnIcon' onClick={onFav}>
             <i className={`${isFav ? 'fa' : 'far'} fa-heart`} />
