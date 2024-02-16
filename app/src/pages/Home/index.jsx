@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Route, Switch } from 'wouter'
 import Header from '../../components/Header'
 import GameDetail from '../GameDetail'
@@ -10,7 +10,6 @@ import NotFound from '../NotFound'
 import useGames from '../../hooks/useGames'
 import useUser from '../../hooks/useUser'
 import Settings from '../Settings'
-import retrieveFavGames from '../../services/retrieve-fav-games'
 
 export default function Home () {
   const { games } = useGames(null)
