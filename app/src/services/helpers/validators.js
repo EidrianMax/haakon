@@ -68,3 +68,10 @@ export function validateProperty (property) {
   if (!property.trim().length) throw new FormatError('name is empty or blank')
   if (property.trim() !== property) throw new FormatError('blank spaces around name')
 }
+
+export function validateToken (token) {
+  if (typeof token !== 'string') throw new TypeError(`${token} is not a string`)
+  if (!/[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)$/.test(token)) {
+    throw new FormatError('invalid token')
+  }
+}
