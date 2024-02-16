@@ -26,6 +26,6 @@ export default async function modifyUser (token, name, username) {
   if (!res.ok) {
     const { error } = await res.json()
 
-    return error
+    throw new Error(error)
   }
 }
