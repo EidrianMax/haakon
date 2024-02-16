@@ -16,6 +16,7 @@ export default function FormModifyPassword () {
       showLoading()
       await modifyUserPassword(sessionStorage.token, oldpassword, newpassword)
       showModal({ message: 'Password modify successfully', variant: 'success' })
+      event.target.reset()
     } catch ({ message }) {
       showModal({ message, variant: 'error' })
     } finally {
