@@ -1,11 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
-
 import './index.css'
-
 import Game from '../Game'
-
 import { retrieveAllGames } from '../../services'
-
 import AppContext from '../../context/AppContext'
 
 const AllGames = ({ favGames, playingGames, playedGames }) => {
@@ -28,23 +24,25 @@ const AllGames = ({ favGames, playingGames, playedGames }) => {
   }, [])
 
   return games && games.length
-    ? <ul className='gameCards'>
-      {
-        games.map(({ id, backgroundImage, name, platforms, genres, score }) =>
-          <Game
-            key={id}
-            id={id}
-            backgroundImage={backgroundImage}
-            name={name}
-            platforms={platforms}
-            genres={genres}
-            score={score}
-            favGames={favGames}
-            playingGames={playingGames}
-            playedGames={playedGames}
-          />)
-      }
+    ? (
+      <ul className='gameCards'>
+        {
+          games.map(({ id, backgroundImage, name, platforms, genres, score }) =>
+            <Game
+              key={id}
+              id={id}
+              backgroundImage={backgroundImage}
+              name={name}
+              platforms={platforms}
+              genres={genres}
+              score={score}
+              favGames={favGames}
+              playingGames={playingGames}
+              playedGames={playedGames}
+            />)
+        }
       </ul>
+      )
     : <p className='notGameFound'>No game found</p>
 }
 
