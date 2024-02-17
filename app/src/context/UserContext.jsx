@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from 'react'
 import useApp from '../hooks/useApp'
 import { AppContext } from './AppContext'
-import { retrieveUser, retrieveFavGames } from '../services'
+import { retrieveUser, retrieveFavGames, retrievePlayedGames, retrievePlayingGames } from '../services'
 import { useLocation } from 'wouter'
 
 export const UserContext = createContext()
@@ -12,27 +12,32 @@ export function UserContextProvider ({ children }) {
   const { goToHome, showModal, goToLanding, showLoading, hideLoading } = useApp(AppContext)
   const [, navigate] = useLocation()
   const [favGames, setFavGames] = useState([])
+  const [playedGames, setPlayedGames] = useState([])
+  const [playingGames, setPlayingGames] = useState([])
 
   useEffect(() => {
     if (!token) {
       navigate('/')
 
-      return setFavGames([])
+      setFavGames([])
+      setPlayedGames([])
+
+      return
     }
 
-    showLoading()
-
-    retrieveFavGames(token)
-      .then((favGames) => {
+    (async () => {
+      try {
+        showLoading()
+        const favGames = await retrieveFavGames(token)
         setFavGames(favGames)
-
-        return retrieveUser(token)
-      })
-      .then(user => {
+        const playedGames = await retrievePlayedGames(token)
+        setPlayedGames(playedGames)
+        const playingGames = await retrievePlayingGames(token)
+        setPlayingGames(playingGames)
+        const user = retrieveUser(token)
         setUser(user)
         goToHome()
-      })
-      .catch(({ message }) => {
+      } catch ({ message }) {
         if (message === 'jwt expired') {
           showModal({ message: 'sesion expired', variant: 'error' })
           delete window.sessionStorage.token
@@ -45,8 +50,10 @@ export function UserContextProvider ({ children }) {
         delete window.sessionStorage.token
         goToLanding()
         navigate('/')
-      })
-      .finally(() => hideLoading())
+      } finally {
+        hideLoading()
+      }
+    })()
   }, [])
 
   return (
@@ -55,7 +62,11 @@ export function UserContextProvider ({ children }) {
       setToken,
       user,
       favGames,
-      setFavGames
+      setFavGames,
+      playedGames,
+      setPlayedGames,
+      playingGames,
+      setPlayingGames
     }}
     >
       {children}

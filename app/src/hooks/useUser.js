@@ -7,7 +7,7 @@ import { useLocation } from 'wouter'
 import { addFavGame, deleteFavGame } from '../services'
 
 export default function useUser () {
-  const { token, setToken, user, favGames, setFavGames } = useContext(UserContext)
+  const { token, setToken, user, favGames, setFavGames, playedGames, setPlayedGames, playingGames, setPlayingGames } = useContext(UserContext)
   const { showLoading, hideLoading, showModal, goToHome, goToLogin, goToLanding } = useApp()
   const [, navigate] = useLocation()
 
@@ -70,5 +70,5 @@ export default function useUser () {
     }
   }
 
-  return { token, setToken, user, login, register, logout, aggregateFavGame, removeFavGame, favGames }
+  return { token, setToken, user, login, register, logout, aggregateFavGame, removeFavGame, favGames, playedGames, playingGames }
 }
