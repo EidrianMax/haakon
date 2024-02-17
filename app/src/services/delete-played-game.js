@@ -1,10 +1,12 @@
 import { API_URL } from './constants'
-import { validateToken } from './helpers/validators'
+import { validateId, validateToken } from './helpers/validators'
 
-export default async function retrievePlayedGames (token) {
+export default async function deletePlayedGame (token, gameId) {
   validateToken(token)
+  validateId(gameId)
 
-  const res = await fetch(`${API_URL}/users/played`, {
+  const res = await fetch(`${API_URL}/users/played/${gameId}`, {
+    method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`
     }

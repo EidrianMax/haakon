@@ -1,4 +1,5 @@
 import { API_URL } from './constants'
+import { validateName, validateUsername, validatePassword } from './helpers/validators'
 
 /**
  * Signs up a user in the application.
@@ -6,25 +7,14 @@ import { API_URL } from './constants'
  * @param {string} name The full name of the user to be registered.
  * @param {string} username The username of the user to be registered.
  * @param {string} password The password of the user to be registered.
- *
  * @throws {TypeError} When any of the arguments does not match the correct type.
- * @throws {Error} When any of the arguments does not contain the correct format.
+ * @returns User registered
  */
 
 export default async function registerUser (name, username, password) {
-  if (typeof name !== 'string') throw new TypeError(name + ' is not a string')
-  if (!name.trim().length) throw new Error('name is empty or blank')
-  if (name.trim() !== name) throw new Error('blank spaces around name')
-
-  if (typeof username !== 'string') throw new TypeError(username + ' is not a string')
-  if (!username.trim().length) throw new Error('username is empty or blank')
-  if (/\r?\n|\r|\t| /g.test(username)) throw new Error('username has blank spaces')
-  if (username.length < 4) throw new Error('username has less than 4 characters')
-
-  if (typeof password !== 'string') throw new TypeError(`${password} is not a string`)
-  if (!password.trim().length) throw new Error('password is empty or blank')
-  if (/\r?\n|\r|\t| /g.test(password)) throw new Error('password has blank spaces')
-  if (password.length < 6) throw new Error('password has less than 6 characters')
+  validateName(name)
+  validateUsername(username)
+  validatePassword(password)
 
   const res = await fetch(`${API_URL}/users`, {
     method: 'POST',
@@ -37,7 +27,9 @@ export default async function registerUser (name, username, password) {
   const { status } = res
 
   if (status === 201) {
-    return
+    const user = await res.json()
+
+    return user
   }
 
   if (status === 409 || status === 400) {

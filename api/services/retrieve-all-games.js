@@ -5,7 +5,16 @@ async function retrieveAllGames () {
     .populate('platforms', { name: 1 })
     .populate('genres', { name: 1 })
 
-  return games
+  const gamesToReturn = games.map(game => ({
+    id: game.id,
+    name: game.name,
+    backgroundImage: game.backgroundImage,
+    platforms: game.platforms,
+    genres: game.genres,
+    score: game.score
+  }))
+
+  return gamesToReturn
 }
 
 module.exports = retrieveAllGames

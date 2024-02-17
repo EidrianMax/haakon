@@ -29,7 +29,11 @@ async function addGameInUser (property, userId, gameId) {
 
   const userSaved = await user.save()
 
-  return userSaved[property]
+  const games = await Game.find({ _id: { $in: userSaved[property] } })
+    .populate('platforms', { name: 1 })
+    .populate('genres', { name: 1 })
+
+  return games
 }
 
 module.exports = addGameInUser

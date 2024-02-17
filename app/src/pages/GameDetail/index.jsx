@@ -2,21 +2,40 @@ import './index.css'
 import Spinner from '../../components/Spinner'
 import useGifDetail from '../../hooks/useGameDetail'
 import { Redirect } from 'wouter'
+import useUser from '../../hooks/useUser'
 
 export default function GameDetail ({ params: { gameId } }) {
-  const { gameDetail, loading, onFav, isFav, hasError } = useGifDetail({ gameId })
-  console.log(isFav)
+  const { gameDetail, loading, hasError } = useGifDetail({ gameId })
+  const { favGames, aggregateFavGame, removeFavGame } = useUser()
+
+  const isFav = favGames.some(favGame => favGame._id === gameId)
 
   const {
     name, released, description, screenshots,
     platforms, genres, score, website
   } = gameDetail
 
+  const formatDate = date => {
+    const newDate = new Date(date)
+
+    return newDate.toLocaleDateString()
+  }
+
+  const onFav = () => {
+    if (!isFav) {
+      return aggregateFavGame(gameId)
+    }
+
+    removeFavGame(gameId)
+  }
+
   return (
     <>
       <div className='gameDetail'>
         <div className='gameDetail__row'>
-          <div className='releasedDate gameDetail__releasedDate'><time>{released}</time></div>
+          <div className='releasedDate gameDetail__releasedDate'>
+            <time>{formatDate(released)}</time>
+          </div>
           <div className='score'>{score}</div>
           <button className='btnIcon' onClick={onFav}>
             <i className={`${isFav ? 'fa' : 'far'} fa-heart`} />

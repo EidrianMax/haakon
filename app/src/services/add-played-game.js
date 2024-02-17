@@ -1,10 +1,12 @@
+import { validateToken, validateId } from './helpers/validators'
 import { API_URL } from './constants'
-import { validateToken } from './helpers/validators'
 
-export default async function retrievePlayedGames (token) {
+export default async function addPlayedGame (token, gameId) {
   validateToken(token)
+  validateId(gameId)
 
-  const res = await fetch(`${API_URL}/users/played`, {
+  const res = await fetch(`${API_URL}/users/played/${gameId}`, {
+    method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`
     }

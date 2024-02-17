@@ -1,6 +1,6 @@
 require('dotenv').config()
 const { mongoose } = require('@haakon/api-database')
-const { NotFoundError, FormatError } = require('@haakon/api-errors')
+const { FormatError } = require('@haakon/api-errors')
 const searchGames = require('./search-games')
 
 const { MONGO_URL } = process.env
@@ -30,14 +30,9 @@ describe('searchGames', () => {
   it('should fail with doesn\'t found any game', async () => {
     const query = 'grandtheft'
 
-    try {
-      await searchGames(query)
-      throw new Error('should not reach this point')
-    } catch (error) {
-      expect(error).toBeDefined()
-      expect(error).toBeInstanceOf(NotFoundError)
-      expect(error.message).toBe('no game found with that match')
-    }
+    const games = await searchGames(query)
+
+    expect(games).toHaveLength(0)
   })
 
   describe('when parameter are not valid', () => {

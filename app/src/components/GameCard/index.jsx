@@ -1,10 +1,23 @@
+import { useLocation } from 'wouter'
 import './index.css'
 
-export default function GameCard ({ id, name, backgroundImage }) {
+export default function GameCard ({ _id, name, backgroundImage, deleteGame }) {
+  const [, navigate] = useLocation()
+
+  const onGameCard = () => {
+    navigate(`/games/${_id}`)
+  }
+
+  const onDeleteGameCard = (e) => {
+    e.stopPropagation()
+
+    deleteGame(_id)
+  }
+
   return (
-    <li className='GameCard'>
+    <li className='GameCard' onClick={onGameCard}>
       <img className='GameCard-img' loading='lazy' src={backgroundImage} alt={name} />
-      <button className='GameCard-btnIcon'>
+      <button className='GameCard-btnIcon' onClick={onDeleteGameCard}>
         <i className='far fa-times-circle' />
       </button>
       <h3 className='GameCard-title'>{name}</h3>

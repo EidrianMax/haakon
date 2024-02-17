@@ -1,77 +1,49 @@
-import { useEffect, useState } from 'react'
-import useApp from '../../hooks/useApp'
+import { useState } from 'react'
 import useUser from '../../hooks/useUser'
 import './index.css'
-import toggleFavGame from '../../services/toggle-fav-game'
-import togglePlayingGame from '../../services/toggle-playing-game'
-import togglePlayedGame from '../../services/toggle-played-game'
 import Tooltip from '../Tooltip'
 import { Link } from 'wouter'
 
-export default function Game ({ id, name, backgroundImage, platforms, genres, ...props }) {
-  const { token, user } = useUser()
-  const { showLoading, hideLoading, showModal } = useApp()
+export default function Game ({ id, name, backgroundImage, platforms, genres }) {
+  const {
+    favGames,
+    aggregateFavGame,
+    removeFavGame,
+    playedGames,
+    aggregatePlayedGame,
+    removePlayedGame,
+    playingGames,
+    aggregatePlayingGame,
+    removePlayingGame
+  } = useUser()
   const [tooltip, setTooltip] = useState(false)
-  const [isFavGame, setIsFavGame] = useState(false)
-  const [isPlayingGame, setIsPlayingGame] = useState(false)
-  const [isPlayedGame, setIsPlayedGame] = useState(false)
 
-  useEffect(() => {
-    const isFavGame = user?.favGames?.some(favId => favId === id)
-    setIsFavGame(isFavGame)
+  const isFav = favGames.some(favGame => favGame._id === id)
+  const isPlayedGame = playedGames.some(playedGame => playedGame._id === id)
+  const isPlayingGame = playingGames.some(playingGame => playingGame._id === id)
 
-    const isPlayingGame = user?.playingGames?.some(playingId => playingId === id)
-    setIsPlayingGame(isPlayingGame)
-
-    const isPlayedGame = user?.playedGames?.some(playedId => playedId === id)
-    setIsPlayedGame(isPlayedGame)
-  }, [])
-
-  const onFavGame = async () => {
-    try {
-      showLoading()
-      await toggleFavGame(token, id)
-      setIsFavGame(!isFavGame)
-      hideLoading()
-    } catch ({ message }) {
-      showModal({ message, variant: 'error' })
-    } finally {
-      hideLoading()
+  const onFavGame = () => {
+    if (!isFav) {
+      return aggregateFavGame(id)
     }
+
+    removeFavGame(id)
   }
 
-  const onPlayingGame = async () => {
-    try {
-      showLoading()
-      await togglePlayingGame(token, id)
-      setIsPlayingGame(!isPlayingGame)
-      if (isPlayedGame) {
-        togglePlayedGame(token, id)
-        setIsPlayedGame(!isPlayedGame)
-      }
-      hideLoading()
-    } catch ({ message }) {
-      showModal({ message, variant: 'error' })
-    } finally {
-      hideLoading()
+  const onPlayedGame = () => {
+    if (!isPlayedGame) {
+      return aggregatePlayedGame(id)
     }
+
+    removePlayedGame(id)
   }
 
-  const onPlayedGame = async () => {
-    try {
-      showLoading()
-      await togglePlayedGame(token, id)
-      setIsPlayedGame(!isPlayedGame)
-      if (isPlayingGame) {
-        togglePlayingGame(token, id)
-        setIsPlayingGame(!isPlayingGame)
-      }
-      hideLoading()
-    } catch ({ message }) {
-      showModal({ message, variant: 'error' })
-    } finally {
-      hideLoading()
+  const onPlayingGame = () => {
+    if (!isPlayingGame) {
+      return aggregatePlayingGame(id)
     }
+
+    removePlayingGame(id)
   }
 
   const platformsMapped = platforms.map(platform => {
@@ -87,8 +59,6 @@ export default function Game ({ id, name, backgroundImage, platforms, genres, ..
 
   const noRepeated = Array.from(new Set(platformsMapped))
 
-  console.log(noRepeated)
-
   return (
     <li className='Game'>
       <header className='Game-header'>
@@ -99,7 +69,7 @@ export default function Game ({ id, name, backgroundImage, platforms, genres, ..
           alt={name}
         />
         <button className='Game-fav' onClick={onFavGame}>
-          <i className={`${isFavGame ? 'fa' : 'far'} fa-heart`} />
+          <i className={`${isFav ? 'fa' : 'far'} fa-heart`} />
         </button>
       </header>
 

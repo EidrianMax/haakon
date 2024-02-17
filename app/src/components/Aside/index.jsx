@@ -6,7 +6,6 @@ export default function Aside ({ hideAside }) {
   const [, navigate] = useLocation()
   const { logout } = useUser()
   const { user } = useUser()
-  console.log(user)
 
   const goToMyLibrary = () => {
     navigate(`/@${user?.username}`)

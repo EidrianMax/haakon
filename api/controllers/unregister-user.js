@@ -9,7 +9,7 @@ module.exports = async (req, res, next) => {
 
     await unregisterUser(id, password)
 
-    res.status(201).send()
+    res.status(200).send()
   } catch (error) {
     next(error)
   }

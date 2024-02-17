@@ -7,12 +7,15 @@ import unregisterUser from './unregister-user'
 import searchGames from './search-games'
 import retrieveAllGames from './retrieve-all-games'
 import retrieveGameDetail from './retrieve-game-detail'
-import toggleFavGame from './toggle-fav-game'
 import retrieveFavGames from './retrieve-fav-games'
-import togglePlayingGame from './toggle-playing-game'
+import addFavGame from './add-fav-game'
+import deleteFavGame from './delete-fav-game'
 import retrievePlayingGames from './retrieve-playing-games'
-import togglePlayedGame from './toggle-played-game'
+import addPlayingGame from './add-playing-game'
+import deletePlayingGame from './delete-playing-game'
 import retrievePlayedGames from './retrieve-played-games'
+import addPlayedGame from './add-played-game'
+import deletePlayedGame from './delete-played-game'
 
 import context from './context'
 
@@ -26,11 +29,14 @@ export {
   searchGames,
   retrieveAllGames,
   retrieveGameDetail,
-  toggleFavGame,
   retrieveFavGames,
-  togglePlayingGame,
   retrievePlayingGames,
-  togglePlayedGame,
   retrievePlayedGames,
+  addFavGame,
+  deleteFavGame,
+  addPlayedGame,
+  deletePlayedGame,
+  addPlayingGame,
+  deletePlayingGame,
   context
 }
