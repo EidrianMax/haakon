@@ -6,7 +6,7 @@ function ListOfGameCards ({ games }) {
     <ul className='GameCards'>
       {
         games?.map(game => (
-          <GameCard key={game.id} {...game} />
+          <GameCard key={game._id} {...game} />
         ))
       }
     </ul>
