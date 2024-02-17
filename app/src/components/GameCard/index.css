@@ -23,6 +23,7 @@
   font-size: 1.8rem;
   transition: color 0.2s;
   font-weight: lighter;
+  z-index: 5;
 }
 
 .GameCard-btnIcon:hover {

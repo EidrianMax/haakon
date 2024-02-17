@@ -1,28 +1,26 @@
-import { useEffect, useState } from 'react'
-import useApp from '../../hooks/useApp'
+import { useState } from 'react'
 import useUser from '../../hooks/useUser'
 import './index.css'
-import togglePlayingGame from '../../services/toggle-playing-game'
-import togglePlayedGame from '../../services/toggle-played-game'
 import Tooltip from '../Tooltip'
 import { Link } from 'wouter'
 
 export default function Game ({ id, name, backgroundImage, platforms, genres }) {
-  const { token, user, favGames, aggregateFavGame, removeFavGame } = useUser()
-  const { showLoading, hideLoading, showModal } = useApp()
+  const {
+    favGames,
+    aggregateFavGame,
+    removeFavGame,
+    playedGames,
+    aggregatePlayedGame,
+    removePlayedGame,
+    playingGames,
+    aggregatePlayingGame,
+    removePlayingGame
+  } = useUser()
   const [tooltip, setTooltip] = useState(false)
-  const [isPlayingGame, setIsPlayingGame] = useState(false)
-  const [isPlayedGame, setIsPlayedGame] = useState(false)
 
   const isFav = favGames.some(favGame => favGame._id === id)
-
-  useEffect(() => {
-    const isPlayingGame = user?.playingGames?.some(playingId => playingId === id)
-    setIsPlayingGame(isPlayingGame)
-
-    const isPlayedGame = user?.playedGames?.some(playedId => playedId === id)
-    setIsPlayedGame(isPlayedGame)
-  }, [])
+  const isPlayedGame = playedGames.some(playedGame => playedGame._id === id)
+  const isPlayingGame = playingGames.some(playingGame => playingGame._id === id)
 
   const onFavGame = () => {
     if (!isFav) {
@@ -32,38 +30,20 @@ export default function Game ({ id, name, backgroundImage, platforms, genres }) 
     removeFavGame(id)
   }
 
-  const onPlayingGame = async () => {
-    try {
-      showLoading()
-      await togglePlayingGame(token, id)
-      setIsPlayingGame(!isPlayingGame)
-      if (isPlayedGame) {
-        togglePlayedGame(token, id)
-        setIsPlayedGame(!isPlayedGame)
-      }
-      hideLoading()
-    } catch ({ message }) {
-      showModal({ message, variant: 'error' })
-    } finally {
-      hideLoading()
+  const onPlayedGame = () => {
+    if (!isPlayedGame) {
+      return aggregatePlayedGame(id)
     }
+
+    removePlayedGame(id)
   }
 
-  const onPlayedGame = async () => {
-    try {
-      showLoading()
-      await togglePlayedGame(token, id)
-      setIsPlayedGame(!isPlayedGame)
-      if (isPlayingGame) {
-        togglePlayingGame(token, id)
-        setIsPlayingGame(!isPlayingGame)
-      }
-      hideLoading()
-    } catch ({ message }) {
-      showModal({ message, variant: 'error' })
-    } finally {
-      hideLoading()
+  const onPlayingGame = () => {
+    if (!isPlayingGame) {
+      return aggregatePlayingGame(id)
     }
+
+    removePlayingGame(id)
   }
 
   const platformsMapped = platforms.map(platform => {

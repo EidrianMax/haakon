@@ -29,7 +29,7 @@ async function addGameInUser (property, userId, gameId) {
 
   const userSaved = await user.save()
 
-  const games = await Game.find({ _id: { $in: userSaved.favGames } })
+  const games = await Game.find({ _id: { $in: userSaved[property] } })
     .populate('platforms', { name: 1 })
     .populate('genres', { name: 1 })
 

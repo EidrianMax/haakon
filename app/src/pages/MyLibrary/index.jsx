@@ -6,7 +6,14 @@ import NavTabs from '../../components/NavTabs'
 
 export default function MyLibrary () {
   const [view, setView] = useState('FavoritesGames')
-  const { favGames, playedGames, playingGames } = useUser()
+  const {
+    favGames,
+    playedGames,
+    playingGames,
+    removeFavGame,
+    removePlayedGame,
+    removePlayingGame
+  } = useUser()
 
   const goToFavoritesGames = () => setView('FavoritesGames')
   const goToPlayingGames = () => setView('PlayingGames')
@@ -24,9 +31,9 @@ export default function MyLibrary () {
       <br />
 
       <div>
-        {view === 'FavoritesGames' && <GameCards games={favGames} />}
-        {view === 'PlayingGames' && <GameCards games={playingGames} />}
-        {view === 'PlayedGames' && <GameCards games={playedGames} />}
+        {view === 'FavoritesGames' && <GameCards games={favGames} deleteGame={removeFavGame} />}
+        {view === 'PlayingGames' && <GameCards games={playingGames} deleteGame={removePlayingGame} />}
+        {view === 'PlayedGames' && <GameCards games={playedGames} deleteGame={removePlayedGame} />}
       </div>
     </div>
   )

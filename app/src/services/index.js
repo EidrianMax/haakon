@@ -15,6 +15,10 @@ import togglePlayedGame from './toggle-played-game'
 import retrievePlayedGames from './retrieve-played-games'
 import addFavGame from './add-fav-game'
 import deleteFavGame from './delete-fav-game'
+import addPlayedGame from './add-played-game'
+import deletePlayedGame from './delete-played-game'
+import addPlayingGame from './add-playing-game'
+import deletePlayingGame from './delete-playing-game'
 
 import context from './context'
 
@@ -36,5 +40,9 @@ export {
   retrievePlayedGames,
   addFavGame,
   deleteFavGame,
+  addPlayedGame,
+  deletePlayedGame,
+  addPlayingGame,
+  deletePlayingGame,
   context
 }

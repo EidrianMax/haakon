@@ -1,7 +1,7 @@
 import { useLocation } from 'wouter'
 import './index.css'
 
-export default function GameCard ({ _id, name, backgroundImage }) {
+export default function GameCard ({ _id, name, backgroundImage, deleteGame }) {
   const [, navigate] = useLocation()
 
   const onGameCard = () => {
@@ -10,6 +10,8 @@ export default function GameCard ({ _id, name, backgroundImage }) {
 
   const onDeleteGameCard = (e) => {
     e.stopPropagation()
+
+    deleteGame(_id)
   }
 
   return (

@@ -34,7 +34,7 @@ export function UserContextProvider ({ children }) {
         setPlayedGames(playedGames)
         const playingGames = await retrievePlayingGames(token)
         setPlayingGames(playingGames)
-        const user = retrieveUser(token)
+        const user = await retrieveUser(token)
         setUser(user)
         goToHome()
       } catch ({ message }) {
