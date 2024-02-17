@@ -33,9 +33,6 @@ const game = new Schema({
   },
   website: {
     type: String
-  },
-  isFav: {
-    type: Boolean
   }
 })
 
