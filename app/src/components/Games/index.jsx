@@ -5,7 +5,7 @@ function ListOfGames ({ games }) {
   return (
     <ul className='Games'>
       {
-        games?.map(({ id, name, backgroundImage, platforms, genres }) => (
+        games?.map(({ id, name, backgroundImage, platforms, genres, score }) => (
           <Game
             key={id}
             id={id}
@@ -13,6 +13,7 @@ function ListOfGames ({ games }) {
             backgroundImage={backgroundImage}
             platforms={platforms}
             genres={genres}
+            score={score}
           />
         ))
       }

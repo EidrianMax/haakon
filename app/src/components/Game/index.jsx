@@ -4,7 +4,7 @@ import './index.css'
 import Tooltip from '../Tooltip'
 import { Link } from 'wouter'
 
-export default function Game ({ id, name, backgroundImage, platforms, genres }) {
+export default function Game ({ id, name, backgroundImage, platforms, genres, score }) {
   const {
     favGames,
     aggregateFavGame,
@@ -51,10 +51,19 @@ export default function Game ({ id, name, backgroundImage, platforms, genres }) 
 
     if (name.startsWith('playstation') || name.startsWith('ps')) return 'playstation'
     if (name.startsWith('xbox')) return 'xbox'
-    if (name.startsWith('nintendo')) return 'nintendo'
-    if (name === 'ios' || name === 'macOS') return 'apple'
+    if (name.startsWith('nintendo') ||
+        name.startsWith('wii') ||
+        name.startsWith('game boy') ||
+        name === 'nes' ||
+        name === 'snes' ||
+        name === 'gamecube') return 'gamepad'
+    if (name === 'ios' || name === 'macos') return 'apple'
+    if (name === 'pc') return 'windows'
+    if (name.startsWith('atari')) return 'ghost'
+    if (name === 'linux') return 'linux'
+    if (name === 'android') return 'android'
 
-    return name
+    return 'dice-d6'
   })
 
   const noRepeated = Array.from(new Set(platformsMapped))
@@ -77,15 +86,33 @@ export default function Game ({ id, name, backgroundImage, platforms, genres }) 
         <div className='Game-platforms-and-score'>
           <ul className='Game-platforms'>
             {
-              noRepeated.map(platform => (
-                <li className='Game-platform' key={platform}>
-                  <i key={id} className={`fab fa-${platform}`} />
-                </li>
-              ))
+              noRepeated.map(platform => {
+                if (platform === 'gamepad') {
+                  return (
+                    <li className='Game-platform' key={platform}>
+                      <i key={id} className={`fas fa-${platform}`} />
+                    </li>
+                  )
+                }
+
+                if (platform === 'dice-d6') {
+                  return (
+                    <li className='Game-platform' key={platform}>
+                      <i key={id} className={`fas fa-${platform}`} />
+                    </li>
+                  )
+                }
+
+                return (
+                  <li className='Game-platform' key={platform}>
+                    <i key={id} className={`fab fa-${platform}`} />
+                  </li>
+                )
+              })
             }
           </ul>
 
-          <div className='Game-score'>50</div>
+          <div className='Game-score'>{score || 0}</div>
         </div>
 
         <h3 className='Game-name'>
@@ -95,9 +122,21 @@ export default function Game ({ id, name, backgroundImage, platforms, genres }) 
         <div className='Game-genres-and-more-actions'>
           <ul className='Game-genres'>
             {
-              genres.map(genre => (
-                <li className='Game-genre' key={genre._id}>{genre.name}</li>
-              ))
+              genres.map((genre, index) => {
+                if (index === 0 && index === genres.length - 1) {
+                  return <li className='Game-genre' key={genre._id}>{genre.name}</li>
+                }
+
+                if (index === 0) {
+                  return <li className='Game-genre' key={genre._id}>{genre.name},{'\xa0'}</li>
+                }
+
+                if (index === genres.length - 1) {
+                  return <li className='Game-genre' key={genre._id}>{genre.name.toLowerCase()}</li>
+                }
+
+                return <li className='Game-genre' key={genre._id}>{genre.name.toLowerCase()},{'\xa0'}</li>
+              })
             }
           </ul>
 

@@ -47,7 +47,10 @@
   padding-left: 0;
   margin: 0;
   display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
+  gap: 0.4rem;
 }
 
 .Game-score {
@@ -69,6 +72,14 @@
   color: var(--secondary);
 }
 
+.Game-genres-and-more-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1em;
+}
+
 .Game-genres {
   list-style: none;
   padding-left: 0;
@@ -77,9 +88,6 @@
   overflow: hidden;
 }
 
-.Game-genres-and-more-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1em;
+.Game-genres > * {
+  flex: none;
 }
