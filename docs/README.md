@@ -1,12 +1,16 @@
 # Haakon
 
-![Cyberpunk 2077](assets/cover-gif.webp "Cyberpunk 2077")
+![Cyberpunk 2077](assets/cover-gif.webp 'Cyberpunk 2077')
 
 ## Description
 
 Haakon is an application where you can browse, search and explore a large database.
 
 You will be able to mark the games you want, the ones you are playing, what you have finished.
+
+### Installation Guide
+
+- Clone this repository [here](https://github.com/EidrianMax/haakon) and see api and app documentacion.
 
 ## Use cases
 
@@ -53,6 +57,7 @@ You will be able to mark the games you want, the ones you are playing, what you 
 ![Code Coverage](assets/logic-api-coverage.png)
 
 ## Technologies
+
 ![JavaScript Badge](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=000&style=for-the-badge)
 ![MongoDB Badge](https://img.shields.io/badge/MongoDB-47A248?logo=mongodb&logoColor=fff&style=for-the-badge)
 ![Mongoose Badge](https://img.shields.io/badge/Mongoose-800?logo=mongoose&logoColor=fff&style=for-the-badge)
