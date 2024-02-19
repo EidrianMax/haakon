@@ -1,1 +1,1 @@
-export const API_URL = 'https://zealous-pink-gosling.cyclic.app/api'
+export const API_URL = import.meta.env.VITE_API_URL
