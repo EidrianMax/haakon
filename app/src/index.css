@@ -46,10 +46,11 @@ body {
   min-height: 100vh;
   background-image: url(https://wallpaperaccess.com/full/7445.jpg);
   background-size: cover;
-  background-position: center;
+  background-position: left;
   padding: 0 1rem;
   max-width: 800px;
   margin: 0 auto;
+  background-attachment: fixed;
 }
 
 .background {
