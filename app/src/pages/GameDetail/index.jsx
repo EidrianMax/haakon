@@ -3,6 +3,9 @@ import { useEffect, useState } from 'react'
 import { retrieveGameDetail } from '../../services'
 import Spinner from '../../components/Spinner'
 import { Redirect } from 'wouter'
+import Fav from '../../components/Fav'
+import Carousel from '../../components/Carousel'
+import Platforms from '../../components/Platforms'
 
 export default function GameDetail ({ params: { gameId } }) {
   const [game, setGame] = useState({})
@@ -43,28 +46,14 @@ export default function GameDetail ({ params: { gameId } }) {
           <time>{formatDate(released)}</time>
         </div>
         <div className='score'>{score}</div>
-        <button className='btnIcon' onClick={() => {}}>
-          <i className='fa fa-heart' />
-        </button>
+        <Fav id={gameId} />
       </div>
       <h1 className='gameDetail__title'>{name}</h1>
-      <ul className='gallery'>
-        {
-            screenshots?.length
-              ? screenshots.map((item, index) => <li key={index} className='gallery__item'><img className='gallery__img' src={item} /></li>)
-              : null
-          }
-      </ul>
+      <Carousel images={screenshots} />
       <p className='genres-title'>Description</p>
       <p>{description}</p>
       <p className='platforms-title'>Platforms</p>
-      <ul className='platforms-list'>
-        {
-            platforms
-              ? platforms.map(({ _id, name }) => <li className='platforms-list__item' key={_id}>{name}</li>)
-              : null
-          }
-      </ul>
+      <Platforms platforms={platforms} />
       <p className='genres-title'>Genres</p>
       <ul className='genres-list'>
         {

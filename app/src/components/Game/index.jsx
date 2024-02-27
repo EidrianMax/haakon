@@ -3,31 +3,10 @@ import { useState } from 'react'
 import { Link } from 'wouter'
 import Fav from '../Fav'
 import Tooltip from '../Tooltip'
+import Platforms from '../Platforms'
 
 export default function Game ({ id, name, backgroundImage, platforms, genres, score }) {
   const [tooltip, setTooltip] = useState(false)
-
-  const platformsMapped = platforms.map(platform => {
-    const name = platform.name.toLowerCase()
-
-    if (name.startsWith('playstation') || name.startsWith('ps')) return 'playstation'
-    if (name.startsWith('xbox')) return 'xbox'
-    if (name.startsWith('nintendo') ||
-        name.startsWith('wii') ||
-        name.startsWith('game boy') ||
-        name === 'nes' ||
-        name === 'snes' ||
-        name === 'gamecube') return 'gamepad'
-    if (name === 'ios' || name === 'macos') return 'apple'
-    if (name === 'pc') return 'windows'
-    if (name.startsWith('atari')) return 'ghost'
-    if (name === 'linux') return 'linux'
-    if (name === 'android') return 'android'
-
-    return 'dice-d6'
-  })
-
-  const platformsNoRepeated = Array.from(new Set(platformsMapped))
 
   return (
     <li className='Game'>
@@ -45,33 +24,7 @@ export default function Game ({ id, name, backgroundImage, platforms, genres, sc
 
       <div className='Game-body'>
         <div className='Game-platforms-and-score'>
-          <ul className='Game-platforms'>
-            {
-              platformsNoRepeated.map(platform => {
-                if (platform === 'gamepad') {
-                  return (
-                    <li className='Game-platform' key={platform}>
-                      <i key={platform} className={`fas fa-${platform}`} />
-                    </li>
-                  )
-                }
-
-                if (platform === 'dice-d6') {
-                  return (
-                    <li className='Game-platform' key={platform}>
-                      <i key={platform} className={`fas fa-${platform}`} />
-                    </li>
-                  )
-                }
-
-                return (
-                  <li className='Game-platform' key={platform}>
-                    <i key={platform} className={`fab fa-${platform}`} />
-                  </li>
-                )
-              })
-            }
-          </ul>
+          <Platforms platforms={platforms} />
 
           <div className='Game-score'>{score || 0}</div>
         </div>
