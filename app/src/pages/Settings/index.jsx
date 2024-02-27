@@ -3,6 +3,7 @@ import NavTabs from './NavTabs'
 import ModifyUserForm from '../../components/ModifyUserForm'
 import ModifyPasswordForm from '../../components/ModifyPasswordForm'
 import DeleteUserForm from '../../components/DeleteUserForm'
+import { Helmet } from 'react-helmet'
 
 export default function Settings () {
   const [view, setView] = useState('Profile')
@@ -13,6 +14,10 @@ export default function Settings () {
 
   return (
     <>
+      <Helmet>
+        <title>Settings | Haakon</title>
+      </Helmet>
+
       <div className='userSettings'>
         <h1 style={{ textAlign: 'center' }} className='userSettings__title'>Settings</h1>
 

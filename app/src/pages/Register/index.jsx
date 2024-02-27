@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { registerUser } from '../../services'
 import { useLocation } from 'wouter'
 import Alert from '../../components/Alert'
+import { Helmet } from 'react-helmet'
 
 const validateFormValues = ({ name, username, password }) => {
   const errors = {}
@@ -94,57 +95,63 @@ export default function Register () {
   }
 
   return (
-    <div className='Register'>
-      <h1 className='Register-title'>Register</h1>
+    <>
+      <Helmet>
+        <title>Register | Haakon</title>
+      </Helmet>
 
-      {isRegistered && <Alert variant='success'>User registered successfully, redirect to login...</Alert>}
+      <div className='Register'>
+        <h1 className='Register-title'>Register</h1>
 
-      {hasError && <Alert variant='error'>{hasError}</Alert>}
+        {isRegistered && <Alert variant='success'>User registered successfully, redirect to login...</Alert>}
 
-      <form className='RegisterForm' onSubmit={handleSubmit}>
-        <input
-          className='Input RegisterForm-Input'
-          type='text'
-          name='name'
-          placeholder='Name'
-          onBlur={handleBlur}
-        />
-        {errors.name && <p style={{ color: 'red' }}>{errors.name}</p>}
+        {hasError && <Alert variant='error'>{hasError}</Alert>}
 
-        <input
-          className='Input RegisterForm-Input'
-          type='text'
-          name='username'
-          placeholder='Username'
-          onBlur={handleBlur}
-        />
-        {errors.username && <p style={{ color: 'red' }}>{errors.username}</p>}
+        <form className='RegisterForm' onSubmit={handleSubmit}>
+          <input
+            className='Input RegisterForm-Input'
+            type='text'
+            name='name'
+            placeholder='Name'
+            onBlur={handleBlur}
+          />
+          {errors.name && <p style={{ color: 'red' }}>{errors.name}</p>}
 
-        <input
-          className='Input RegisterForm-Input'
-          type='password'
-          name='password'
-          placeholder='Password'
-          onBlur={handleBlur}
-          onChange={handleChange}
-        />
-        {errors.password && <p style={{ color: 'red' }}>{errors.password}</p>}
+          <input
+            className='Input RegisterForm-Input'
+            type='text'
+            name='username'
+            placeholder='Username'
+            onBlur={handleBlur}
+          />
+          {errors.username && <p style={{ color: 'red' }}>{errors.username}</p>}
 
-        <button className='Button RegisterForm-Button' type='submit'>
-          {
+          <input
+            className='Input RegisterForm-Input'
+            type='password'
+            name='password'
+            placeholder='Password'
+            onBlur={handleBlur}
+            onChange={handleChange}
+          />
+          {errors.password && <p style={{ color: 'red' }}>{errors.password}</p>}
+
+          <button className='Button RegisterForm-Button' type='submit'>
+            {
             isLoading
               ? <i className='fas fa-spinner fa-spin' />
               : 'Register'
           }
-        </button>
+          </button>
 
-        <button
-          className='Button RegisterForm-Button'
-          type='button'
-          onClick={goToLogin}
-        >I have an account
-        </button>
-      </form>
-    </div>
+          <button
+            className='Button RegisterForm-Button'
+            type='button'
+            onClick={goToLogin}
+          >I have an account
+          </button>
+        </form>
+      </div>
+    </>
   )
 }

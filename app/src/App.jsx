@@ -16,6 +16,8 @@ import Login from './pages/Login'
 import useUser from './hooks/useUser'
 import Settings from './pages/Settings'
 
+import { Helmet } from 'react-helmet'
+
 export default function App () {
   const [sidebar, setSidebar] = useState(false)
   const [modal, setModal] = useState(false)
@@ -36,6 +38,13 @@ export default function App () {
 
   return (
     <>
+      <Helmet>
+        <link rel='canonical' href={`${import.meta.env.VITE_APP_URL}`} />
+        <meta
+          name='description'
+          content='Search, discover & share your favorite games'
+        />
+      </Helmet>
       <div className='Container'>
         <Header showSidebar={showSidebar} />
         {sidebar && <Sidebar hideSidebar={hideSidebar} />}

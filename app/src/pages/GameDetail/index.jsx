@@ -5,6 +5,7 @@ import Fav from '../../components/Fav'
 import Carousel from '../../components/Carousel'
 import Platforms from '../../components/Platforms'
 import UseGameDetail from '../../hooks/useGameDetail'
+import { Helmet } from 'react-helmet'
 
 export default function GameDetail ({ params: { gameId } }) {
   const { game, isLoading, hasError } = UseGameDetail({ gameId })
@@ -30,6 +31,10 @@ export default function GameDetail ({ params: { gameId } }) {
 
   return (
     <>
+      <Helmet>
+        <title>{`${game.name} | Haakon`}</title>
+      </Helmet>
+
       <div className='gameDetail__row'>
         <div className='releasedDate gameDetail__releasedDate'>
           <time>{formatDate(released)}</time>
