@@ -11,7 +11,7 @@ export default function SearchResults ({ params: { query } }) {
     <>
       <Helmet>
         <title>
-          {isLoading ? 'Loading...' : `${games.length} results of ${decodeQuery} | Giffy`}
+          {isLoading ? 'Loading...' : `${games.length} results of ${decodeQuery} | Haakon`}
         </title>
       </Helmet>
       {games.length ? <Games games={games} /> : <p>No game found</p>}
