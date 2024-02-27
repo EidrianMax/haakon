@@ -1,20 +1,9 @@
-import { useEffect, useState } from 'react'
-import { searchGames } from '../../services'
 import Games from '../../components/Games'
 import Spinner from '../../components/Spinner'
+import useSearchGames from '../../hooks/useSearchGames'
 
 export default function SearchResults ({ params: { query } }) {
-  const [games, setGames] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [hasError, setHasError] = useState(false)
-
-  useEffect(() => {
-    setIsLoading(true)
-    searchGames(query)
-      .then(games => setGames(games))
-      .catch(e => setHasError(true))
-      .finally(() => setIsLoading(false))
-  }, [query])
+  const { games, isLoading, hasError } = useSearchGames({ query })
 
   return (
     <>

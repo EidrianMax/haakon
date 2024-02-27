@@ -1,29 +1,18 @@
 import './index.css'
-import { useEffect, useState } from 'react'
-import { retrieveGameDetail } from '../../services'
 import Spinner from '../../components/Spinner'
 import { Redirect } from 'wouter'
 import Fav from '../../components/Fav'
 import Carousel from '../../components/Carousel'
 import Platforms from '../../components/Platforms'
+import UseGameDetail from '../../hooks/useGameDetail'
 
 export default function GameDetail ({ params: { gameId } }) {
-  const [game, setGame] = useState({})
-  const [isLoading, setIsLoading] = useState(false)
-  const [hasError, setHasError] = useState(false)
+  const { game, isLoading, hasError } = UseGameDetail({ gameId })
 
   const {
     name, released, description, screenshots,
     platforms, genres, score, website
   } = game
-
-  useEffect(() => {
-    setIsLoading(true)
-    retrieveGameDetail(gameId)
-      .then(game => setGame(game))
-      .catch(() => setHasError(true))
-      .finally(() => setIsLoading(false))
-  }, [gameId])
 
   const formatDate = date => {
     const newDate = new Date(date)
