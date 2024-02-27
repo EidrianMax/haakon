@@ -4,6 +4,7 @@ import { useLocation } from 'wouter'
 import { authenticateUser } from '../../services'
 import Alert from '../../components/Alert'
 import useUser from '../../hooks/useUser'
+import { Helmet } from 'react-helmet'
 
 export default function Login () {
   const [isLoading, setIsLoading] = useState(false)
@@ -39,44 +40,50 @@ export default function Login () {
   }
 
   return (
-    <div className='Login'>
-      <h1 className='Login-title'>Login</h1>
+    <>
+      <Helmet>
+        <title>Login | Haakon</title>
+      </Helmet>
 
-      {hasError && <Alert variant='error'>{hasError}</Alert>}
+      <div className='Login'>
+        <h1 className='Login-title'>Login</h1>
 
-      <form className='LoginForm' onSubmit={onSubmit}>
-        <input
-          className='Input LoginForm-Input'
-          type='text'
-          placeholder='Username'
-          name='username'
-        />
-        <input
-          className='Input LoginForm-Input'
-          type='password'
-          placeholder='Password'
-          name='password'
-        />
+        {hasError && <Alert variant='error'>{hasError}</Alert>}
 
-        <button
-          type='submit'
-          className='Button LoginForm-Button'
-        >
-          {
+        <form className='LoginForm' onSubmit={onSubmit}>
+          <input
+            className='Input LoginForm-Input'
+            type='text'
+            placeholder='Username'
+            name='username'
+          />
+          <input
+            className='Input LoginForm-Input'
+            type='password'
+            placeholder='Password'
+            name='password'
+          />
+
+          <button
+            type='submit'
+            className='Button LoginForm-Button'
+          >
+            {
             isLoading
               ? <i className='fas fa-spinner fa-spin' />
               : 'Login'
           }
-        </button>
+          </button>
 
-        <button
-          type='button'
-          className='Button'
-          onClick={goToRegister}
-        >
-          Don't have account? Register
-        </button>
-      </form>
-    </div>
+          <button
+            type='button'
+            className='Button'
+            onClick={goToRegister}
+          >
+            Don't have account? Register
+          </button>
+        </form>
+      </div>
+    </>
   )
 }

@@ -3,6 +3,7 @@ import useUser from '../../hooks/useUser'
 import GameCards from '../../components/GameCards'
 import NavTabs from '../../components/NavTabs'
 import Spinner from '../../components/Spinner'
+import { Helmet } from 'react-helmet'
 
 export default function Library () {
   const {
@@ -22,6 +23,10 @@ export default function Library () {
 
   return (
     <>
+      <Helmet>
+        <title>My Library | Haakon</title>
+      </Helmet>
+
       <NavTabs
         view={view}
         goToFavoriteGames={goToFavoritesGames}
