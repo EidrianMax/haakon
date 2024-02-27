@@ -1,60 +1,50 @@
 import { createContext, useEffect, useState } from 'react'
-import useApp from '../hooks/useApp'
-import { AppContext } from './AppContext'
-import { retrieveUser, retrieveFavGames, retrievePlayedGames, retrievePlayingGames } from '../services'
+import { retrieveFavGames, retrievePlayedGames, retrievePlayingGames, retrieveUser } from '../services'
 import { useLocation } from 'wouter'
 
 export const UserContext = createContext()
 
-export function UserContextProvider ({ children }) {
-  const [token, setToken] = useState(() => window.sessionStorage.token)
-  const [user, setUser] = useState(null)
-  const { goToHome, showModal, goToLanding, showLoading, hideLoading } = useApp(AppContext)
-  const [, navigate] = useLocation()
+export default function UserContextProvider ({ children }) {
+  const [token, setToken] = useState(window.sessionStorage.getItem('token'))
+  const [user, setUser] = useState({})
   const [favGames, setFavGames] = useState([])
-  const [playedGames, setPlayedGames] = useState([])
   const [playingGames, setPlayingGames] = useState([])
+  const [playedGames, setPlayedGames] = useState([])
+  const [isExpiredSession, setIsExpiredSession] = useState(false)
+  const [, navigate] = useLocation()
 
   useEffect(() => {
-    if (!token) {
-      navigate('/')
+    if (token) {
+      Promise.all([retrieveUser(token), retrieveFavGames(token), retrievePlayingGames(token), retrievePlayedGames(token)])
+        .then(values => {
+          const [user, favGames, playingGames, playedGames] = values
 
-      setFavGames([])
-      setPlayedGames([])
-
-      return
-    }
-
-    (async () => {
-      try {
-        showLoading()
-        const favGames = await retrieveFavGames(token)
-        setFavGames(favGames)
-        const playedGames = await retrievePlayedGames(token)
-        setPlayedGames(playedGames)
-        const playingGames = await retrievePlayingGames(token)
-        setPlayingGames(playingGames)
-        const user = await retrieveUser(token)
-        setUser(user)
-        goToHome()
-      } catch ({ message }) {
-        if (message === 'jwt expired') {
-          showModal({ message: 'sesion expired', variant: 'error' })
-          delete window.sessionStorage.token
-          goToLanding()
+          setUser(user)
+          setFavGames(favGames)
+          setPlayingGames(playingGames)
+          setPlayedGames(playedGames)
+        })
+        .catch(() => {
+          setIsExpiredSession(true)
+          setToken(null)
+          setUser({})
+          setFavGames([])
+          setPlayingGames([])
+          setPlayedGames([])
+          window.sessionStorage.removeItem('token')
           navigate('/')
-          return
-        }
+        })
+    }
+  }, [token])
 
-        showModal({ message, variant: 'error' })
-        delete window.sessionStorage.token
-        goToLanding()
-        navigate('/')
-      } finally {
-        hideLoading()
-      }
-    })()
-  }, [])
+  const resetTokenAndUser = () => {
+    setToken(null)
+    setUser({})
+    setFavGames([])
+    setPlayingGames([])
+    setPlayedGames([])
+    window.sessionStorage.removeItem('token')
+  }
 
   return (
     <UserContext.Provider value={{
@@ -63,10 +53,12 @@ export function UserContextProvider ({ children }) {
       user,
       favGames,
       setFavGames,
+      playingGames,
+      setPlayingGames,
       playedGames,
       setPlayedGames,
-      playingGames,
-      setPlayingGames
+      isExpiredSession,
+      resetTokenAndUser
     }}
     >
       {children}

@@ -1,50 +1,11 @@
-import { useState } from 'react'
-import useUser from '../../hooks/useUser'
 import './index.css'
-import Tooltip from '../Tooltip'
+import { useState } from 'react'
 import { Link } from 'wouter'
+import Fav from '../Fav'
+import Tooltip from '../Tooltip'
 
 export default function Game ({ id, name, backgroundImage, platforms, genres, score }) {
-  const {
-    favGames,
-    aggregateFavGame,
-    removeFavGame,
-    playedGames,
-    aggregatePlayedGame,
-    removePlayedGame,
-    playingGames,
-    aggregatePlayingGame,
-    removePlayingGame
-  } = useUser()
   const [tooltip, setTooltip] = useState(false)
-
-  const isFav = favGames.some(favGame => favGame._id === id)
-  const isPlayedGame = playedGames.some(playedGame => playedGame._id === id)
-  const isPlayingGame = playingGames.some(playingGame => playingGame._id === id)
-
-  const onFavGame = () => {
-    if (!isFav) {
-      return aggregateFavGame(id)
-    }
-
-    removeFavGame(id)
-  }
-
-  const onPlayedGame = () => {
-    if (!isPlayedGame) {
-      return aggregatePlayedGame(id)
-    }
-
-    removePlayedGame(id)
-  }
-
-  const onPlayingGame = () => {
-    if (!isPlayingGame) {
-      return aggregatePlayingGame(id)
-    }
-
-    removePlayingGame(id)
-  }
 
   const platformsMapped = platforms.map(platform => {
     const name = platform.name.toLowerCase()
@@ -66,7 +27,7 @@ export default function Game ({ id, name, backgroundImage, platforms, genres, sc
     return 'dice-d6'
   })
 
-  const noRepeated = Array.from(new Set(platformsMapped))
+  const platformsNoRepeated = Array.from(new Set(platformsMapped))
 
   return (
     <li className='Game'>
@@ -77,20 +38,20 @@ export default function Game ({ id, name, backgroundImage, platforms, genres, sc
           src={backgroundImage}
           alt={name}
         />
-        <button className='Game-fav' onClick={onFavGame}>
-          <i className={`${isFav ? 'fa' : 'far'} fa-heart`} />
-        </button>
+        <div className='Game-fav'>
+          <Fav id={id} />
+        </div>
       </header>
 
       <div className='Game-body'>
         <div className='Game-platforms-and-score'>
           <ul className='Game-platforms'>
             {
-              noRepeated.map(platform => {
+              platformsNoRepeated.map(platform => {
                 if (platform === 'gamepad') {
                   return (
                     <li className='Game-platform' key={platform}>
-                      <i key={id} className={`fas fa-${platform}`} />
+                      <i key={platform} className={`fas fa-${platform}`} />
                     </li>
                   )
                 }
@@ -98,14 +59,14 @@ export default function Game ({ id, name, backgroundImage, platforms, genres, sc
                 if (platform === 'dice-d6') {
                   return (
                     <li className='Game-platform' key={platform}>
-                      <i key={id} className={`fas fa-${platform}`} />
+                      <i key={platform} className={`fas fa-${platform}`} />
                     </li>
                   )
                 }
 
                 return (
                   <li className='Game-platform' key={platform}>
-                    <i key={id} className={`fab fa-${platform}`} />
+                    <i key={platform} className={`fab fa-${platform}`} />
                   </li>
                 )
               })
@@ -141,13 +102,10 @@ export default function Game ({ id, name, backgroundImage, platforms, genres, sc
           </ul>
 
           <Tooltip
+            id={id}
             tooltip={tooltip}
-            onOpen={() => setTooltip(true)}
-            onClose={() => setTooltip(false)}
-            isPlayingGame={isPlayingGame}
-            isPlayedGame={isPlayedGame}
-            onPlayingGame={onPlayingGame}
-            onPlayedGame={onPlayedGame}
+            handleClickOpen={() => setTooltip(true)}
+            handleClickClose={() => setTooltip(false)}
           />
         </div>
       </div>

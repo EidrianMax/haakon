@@ -1,52 +1,82 @@
+import { useState } from 'react'
 import './index.css'
-import Button from '../../components/Button'
+import { useLocation } from 'wouter'
+import { authenticateUser } from '../../services'
+import Alert from '../../components/Alert'
 import useUser from '../../hooks/useUser'
-import useApp from '../../hooks/useApp'
 
 export default function Login () {
-  const { login } = useUser()
-  const { goToRegister } = useApp()
+  const [isLoading, setIsLoading] = useState(false)
+  const [hasError, setHasError] = useState('')
+  const [, navigate] = useLocation()
+  const { setToken } = useUser()
+
+  const goToRegister = () => {
+    navigate('/register')
+  }
 
   const onSubmit = async (event) => {
     event.preventDefault()
 
-    const fields = Object.fromEntries(new FormData(event.target))
-    const { username, password } = fields
+    const { username, password } = Object.fromEntries(new FormData(event.target))
 
-    login(username, password)
+    try {
+      setHasError('')
+      setIsLoading(true)
+      const token = await authenticateUser(username, password)
+      setToken(token)
+      window.sessionStorage.setItem('token', token)
+      navigate('/')
+    } catch (error) {
+      setHasError('Wrong credentials')
+    } finally {
+      setIsLoading(false)
+    }
+
+    setTimeout(() => {
+      setHasError('')
+    }, 3000)
   }
 
   return (
-    <>
-      <div className='Login'>
-        <div className='Login-wrapper'>
+    <div className='Login'>
+      <h1 className='Login-title'>Login</h1>
 
-          <h1 className='Login-title'>Login</h1>
+      {hasError && <Alert variant='error'>{hasError}</Alert>}
 
-          <form className='LoginForm' onSubmit={onSubmit}>
-            <input
-              className='input LoginForm-input'
-              type='text'
-              placeholder='Username'
-              name='username'
-            />
-            <input
-              className='input LoginForm-input'
-              type='password'
-              placeholder='Password'
-              name='password'
-            />
+      <form className='LoginForm' onSubmit={onSubmit}>
+        <input
+          className='Input LoginForm-Input'
+          type='text'
+          placeholder='Username'
+          name='username'
+        />
+        <input
+          className='Input LoginForm-Input'
+          type='password'
+          placeholder='Password'
+          name='password'
+        />
 
-            <Button type='submit' className='LoginForm-Button'>
-              Login
-            </Button>
-            <Button type='button' onClick={goToRegister}>
-              Don't have account? Register
-            </Button>
-          </form>
+        <button
+          type='submit'
+          className='Button LoginForm-Button'
+        >
+          {
+            isLoading
+              ? <i className='fas fa-spinner fa-spin' />
+              : 'Login'
+          }
+        </button>
 
-        </div>
-      </div>
-    </>
+        <button
+          type='button'
+          className='Button'
+          onClick={goToRegister}
+        >
+          Don't have account? Register
+        </button>
+      </form>
+    </div>
   )
 }

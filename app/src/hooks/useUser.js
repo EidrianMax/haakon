@@ -1,10 +1,6 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { UserContext } from '../context/UserContext'
-import useApp from './useApp'
-import authenticateUser from '../services/authenticate-user'
-import registerUser from '../services/register-user'
-import { useLocation } from 'wouter'
-import { addFavGame, deleteFavGame, addPlayedGame, addPlayingGame, deletePlayingGame, deletePlayedGame } from '../services'
+import { addFavGame, addPlayedGame, addPlayingGame, deleteFavGame, deletePlayedGame, deletePlayingGame } from '../services'
 
 export default function useUser () {
   const {
@@ -13,122 +9,89 @@ export default function useUser () {
     user,
     favGames,
     setFavGames,
+    playingGames,
+    setPlayingGames,
     playedGames,
     setPlayedGames,
-    playingGames,
-    setPlayingGames
+    isExpiredSession,
+    resetTokenAndUser
   } = useContext(UserContext)
-  const { showLoading, hideLoading, showModal, goToHome, goToLogin, goToLanding } = useApp()
-  const [, navigate] = useLocation()
-
-  const login = async (username, password) => {
-    try {
-      showLoading()
-      const token = await authenticateUser(username, password)
-      window.sessionStorage.token = token
-      setToken(token)
-      goToHome()
-    } catch (error) {
-      showModal({ variant: 'error', message: error.message })
-    } finally {
-      hideLoading()
-    }
-  }
-
-  const register = async (name, username, password) => {
-    try {
-      showLoading()
-      await registerUser(name, username, password)
-      showModal({ message: 'Registered successfully', variant: 'success' })
-      goToLogin()
-    } catch (error) {
-      showModal({ message: error.message, variant: 'error' })
-    } finally {
-      hideLoading()
-    }
-  }
-
-  const logout = () => {
-    delete window.sessionStorage.token
-    goToLanding()
-    navigate('/')
-  }
+  const [isLoading, setIsLoading] = useState(false)
+  const [hasError, setHasError] = useState(false)
+  const [isLoadingPlayingGame, setIsLoadingPlayingGame] = useState(false)
+  const [isLoadingPlayedGame, setIsLoadingPlayedGame] = useState(false)
 
   const aggregateFavGame = async (gameId) => {
     try {
-      showLoading()
+      setIsLoading(true)
       const favGames = await addFavGame(token, gameId)
       setFavGames(favGames)
-      hideLoading()
+      setIsLoading(false)
     } catch ({ message }) {
-      showModal({ message, variant: 'error' })
+      setHasError(true)
     } finally {
-      hideLoading()
+      setIsLoading(false)
     }
   }
 
   const removeFavGame = async (gameId) => {
     try {
-      showLoading()
+      setIsLoading(true)
       const favGames = await deleteFavGame(token, gameId)
       setFavGames(favGames)
-      hideLoading()
+      setIsLoading(false)
     } catch ({ message }) {
-      showModal({ message, variant: 'error' })
+      setHasError(true)
     } finally {
-      hideLoading()
-    }
-  }
-
-  const aggregatePlayedGame = async (gameId) => {
-    try {
-      showLoading()
-      const favGames = await addPlayedGame(token, gameId)
-      setPlayedGames(favGames)
-      hideLoading()
-    } catch ({ message }) {
-      showModal({ message, variant: 'error' })
-    } finally {
-      hideLoading()
-    }
-  }
-
-  const removePlayedGame = async (gameId) => {
-    try {
-      showLoading()
-      const favGames = await deletePlayedGame(token, gameId)
-      setPlayedGames(favGames)
-      hideLoading()
-    } catch ({ message }) {
-      showModal({ message, variant: 'error' })
-    } finally {
-      hideLoading()
+      setIsLoading(false)
     }
   }
 
   const aggregatePlayingGame = async (gameId) => {
     try {
-      showLoading()
+      setIsLoadingPlayingGame(true)
       const favGames = await addPlayingGame(token, gameId)
       setPlayingGames(favGames)
-      hideLoading()
     } catch ({ message }) {
-      showModal({ message, variant: 'error' })
+      setHasError(true)
     } finally {
-      hideLoading()
+      setIsLoadingPlayingGame(false)
     }
   }
 
   const removePlayingGame = async (gameId) => {
     try {
-      showLoading()
+      setIsLoadingPlayingGame(true)
       const favGames = await deletePlayingGame(token, gameId)
       setPlayingGames(favGames)
-      hideLoading()
     } catch ({ message }) {
-      showModal({ message, variant: 'error' })
+      setHasError(true)
     } finally {
-      hideLoading()
+      setIsLoadingPlayingGame(false)
+    }
+  }
+
+  const aggregatePlayedGame = async (gameId) => {
+    try {
+      setIsLoadingPlayedGame(true)
+      const favGames = await addPlayedGame(token, gameId)
+      setPlayedGames(favGames)
+    } catch ({ message }) {
+      setHasError(true)
+    } finally {
+      setIsLoadingPlayedGame(false)
+    }
+  }
+
+  const removePlayedGame = async (gameId) => {
+    try {
+      setIsLoadingPlayedGame(true)
+      const favGames = await deletePlayedGame(token, gameId)
+      setPlayedGames(favGames)
+    } catch ({ message }) {
+      setHasError(true)
+    } finally {
+      setIsLoadingPlayedGame(false)
     }
   }
 
@@ -136,17 +99,23 @@ export default function useUser () {
     token,
     setToken,
     user,
-    login,
-    register,
-    logout,
     favGames,
+    setFavGames,
+    playingGames,
+    setPlayingGames,
+    playedGames,
+    setPlayedGames,
     aggregateFavGame,
     removeFavGame,
-    playedGames,
+    isLoading,
+    isExpiredSession,
     aggregatePlayedGame,
     removePlayedGame,
-    playingGames,
     aggregatePlayingGame,
-    removePlayingGame
+    removePlayingGame,
+    hasError,
+    resetTokenAndUser,
+    isLoadingPlayingGame,
+    isLoadingPlayedGame
   }
 }

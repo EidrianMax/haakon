@@ -1,22 +1,56 @@
-import Landing from './pages/Landing'
+import './App.css'
+import { useEffect, useState } from 'react'
+import { Route, Switch } from 'wouter'
+
+import Header from './components/Header'
+import Modal from './components/Modal'
+
+import Home from './pages/Home'
+import SearchResults from './pages/SearchResults'
+import GameDetail from './pages/GameDetail'
+import NotFound from './pages/NotFound'
+import Sidebar from './components/Sidebar'
+import Library from './pages/Library'
 import Register from './pages/Register'
 import Login from './pages/Login'
-import Home from './pages/Home'
-import Modal from './components/Modal'
-import Spinner from './components/Spinner'
-import useApp from './hooks/useApp'
+import useUser from './hooks/useUser'
+import Settings from './pages/Settings'
 
 export default function App () {
-  const { view, modal, loading, hideModal } = useApp()
+  const [sidebar, setSidebar] = useState(false)
+  const [modal, setModal] = useState(false)
+  const { user, isExpiredSession } = useUser()
+
+  useEffect(() => {
+    if (isExpiredSession) {
+      setModal(true)
+    }
+  }, [isExpiredSession])
+
+  const closeModal = () => {
+    setModal(false)
+  }
+
+  const showSidebar = () => setSidebar(true)
+  const hideSidebar = () => setSidebar(false)
 
   return (
     <>
-      {view === 'Landing' && <Landing />}
-      {view === 'Register' && <Register />}
-      {view === 'Login' && <Login />}
-      {view === 'Home' && <Home />}
-      {modal && <Modal message={modal.message} variant={modal.variant} onAccept={hideModal} />}
-      {loading && <Spinner />}
+      <div className='Container'>
+        <Header showSidebar={showSidebar} />
+        {sidebar && <Sidebar hideSidebar={hideSidebar} />}
+        {modal && <Modal message='Session expired, log in again' closeModal={closeModal} />}
+        <Switch>
+          <Route path='/' component={Home} />
+          <Route path='/search/:query' component={SearchResults} />
+          <Route path='/games/:gameId' component={GameDetail} />
+          <Route path={`/@${user.username}`} component={Library} />
+          <Route path='/register' component={Register} />
+          <Route path='/login' component={Login} />
+          <Route path='/settings' component={Settings} />
+          <Route component={NotFound} />
+        </Switch>
+      </div>
     </>
   )
 }

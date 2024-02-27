@@ -1,11 +1,11 @@
 import './index.css'
 import Game from '../Game'
 
-function ListOfGames ({ games }) {
+export default function Games ({ games }) {
   return (
     <ul className='Games'>
       {
-        games?.map(({ id, name, backgroundImage, platforms, genres, score }) => (
+        games.slice(0, 10).map(({ id, name, backgroundImage, platforms, genres, score }) => (
           <Game
             key={id}
             id={id}
@@ -19,12 +19,4 @@ function ListOfGames ({ games }) {
       }
     </ul>
   )
-}
-
-export default function Games ({ games }) {
-  const hasGames = games?.length > 0
-
-  return hasGames
-    ? <ListOfGames games={games} />
-    : <p>No games found</p>
 }

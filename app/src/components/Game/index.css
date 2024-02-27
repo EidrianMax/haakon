@@ -20,14 +20,6 @@
   position: absolute;
   top: 15px;
   right: 15px;
-  background-color: transparent;
-  color: var(--sixth);
-  border: none;
-  text-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  padding: 0;
-  font-size: 1.8rem;
-  transition: color 0.2s;
-  font-weight: lighter;
 }
 
 .Game-body {

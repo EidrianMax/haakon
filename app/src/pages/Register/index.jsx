@@ -1,42 +1,150 @@
 import './index.css'
-import Button from '../../components/Button'
-import useApp from '../../hooks/useApp'
-import useUser from '../../hooks/useUser'
+import { useState } from 'react'
+import { registerUser } from '../../services'
+import { useLocation } from 'wouter'
+import Alert from '../../components/Alert'
+
+const validateFormValues = ({ name, username, password }) => {
+  const errors = {}
+
+  if (name !== undefined) {
+    if (name.length === 0) {
+      errors.name = 'Name is required'
+    }
+  }
+
+  if (username !== undefined) {
+    if (username.length === 0) {
+      errors.username = 'Username is required'
+    }
+  }
+
+  if (password !== undefined) {
+    if (password.length === 0) {
+      errors.password = 'Password is required'
+    } else if (password.length < 6) {
+      errors.password = 'Password min length is 8 characters'
+    }
+  }
+
+  return errors
+}
 
 export default function Register () {
-  const { goToLogin } = useApp()
-  const { register } = useUser()
+  const [errors, setErrors] = useState({})
+  const [isLoading, setIsLoading] = useState(false)
+  const [isRegistered, setIsRegistered] = useState(false)
+  const [hasError, setHasError] = useState('')
+  const [, navigate] = useLocation()
 
-  const onSubmit = async (event) => {
+  const handleSubmit = async event => {
     event.preventDefault()
 
-    const fields = Object.fromEntries(new FormData(event.target))
+    const { name, username, password } = Object.fromEntries(new FormData(event.target))
 
-    const { name, username, password } = fields
+    const newErrors = validateFormValues({ name, username, password })
 
-    register(name, username, password)
+    setErrors(newErrors)
+
+    if (Object.keys(newErrors).length === 0) {
+      try {
+        setHasError('')
+        setIsLoading(true)
+        await registerUser(name, username, password)
+        setIsRegistered(true)
+        setTimeout(() => {
+          navigate('/login')
+        }, 2000)
+      } catch (error) {
+        setHasError(error.message)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    setTimeout(() => {
+      setHasError('')
+    }, 3000)
+  }
+
+  const handleBlur = event => {
+    const { name, value } = event.target
+
+    const newErrors = validateFormValues({ [name]: value })
+
+    if (Object.keys(newErrors).length !== 0) {
+      setErrors({
+        ...errors,
+        ...newErrors
+      })
+    } else {
+      setErrors({
+        ...errors,
+        [name]: ''
+      })
+    }
+  }
+
+  const handleChange = event => {
+    handleBlur(event)
+  }
+
+  const goToLogin = () => {
+    navigate('/login')
   }
 
   return (
-    <>
-      <div className='Register'>
-        <div className='Register-wrapper'>
-          <h1 className='Register-title'>Register</h1>
+    <div className='Register'>
+      <h1 className='Register-title'>Register</h1>
 
-          <form className='RegisterForm' onSubmit={onSubmit}>
-            <input className='input RegisterForm-input' type='text' name='name' placeholder='Name' />
-            <input className='input RegisterForm-input' type='text' name='username' placeholder='Username' />
-            <input className='input RegisterForm-input' type='password' name='password' placeholder='Password' />
+      {isRegistered && <Alert variant='success'>User registered successfully, redirect to login...</Alert>}
 
-            <Button className='RegisterForm-Button'>Register</Button>
-            <Button className='RegisterForm-Button' onClick={goToLogin}>I have an account</Button>
-          </form>
+      {hasError && <Alert variant='error'>{hasError}</Alert>}
 
-          <p>
-            By signing up, you agree to HAAKON's <strong>Terms of Service</strong> and <strong>Privacy Policy</strong>.
-          </p>
-        </div>
-      </div>
-    </>
+      <form className='RegisterForm' onSubmit={handleSubmit}>
+        <input
+          className='Input RegisterForm-Input'
+          type='text'
+          name='name'
+          placeholder='Name'
+          onBlur={handleBlur}
+        />
+        {errors.name && <p style={{ color: 'red' }}>{errors.name}</p>}
+
+        <input
+          className='Input RegisterForm-Input'
+          type='text'
+          name='username'
+          placeholder='Username'
+          onBlur={handleBlur}
+        />
+        {errors.username && <p style={{ color: 'red' }}>{errors.username}</p>}
+
+        <input
+          className='Input RegisterForm-Input'
+          type='password'
+          name='password'
+          placeholder='Password'
+          onBlur={handleBlur}
+          onChange={handleChange}
+        />
+        {errors.password && <p style={{ color: 'red' }}>{errors.password}</p>}
+
+        <button className='Button RegisterForm-Button' type='submit'>
+          {
+            isLoading
+              ? <i className='fas fa-spinner fa-spin' />
+              : 'Register'
+          }
+        </button>
+
+        <button
+          className='Button RegisterForm-Button'
+          type='button'
+          onClick={goToLogin}
+        >I have an account
+        </button>
+      </form>
+    </div>
   )
 }

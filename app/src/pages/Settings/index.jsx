@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import NavTabs from './NavTabs'
-import FormModifyProfile from '../../components/FormModifyProfile'
-import FormModifyPassword from '../../components/FormModifyPassword'
-import FormDeleteUser from '../../components/DeleteAccount'
+import ModifyUserForm from '../../components/ModifyUserForm'
+import ModifyPasswordForm from '../../components/ModifyPasswordForm'
+import DeleteUserForm from '../../components/DeleteUserForm'
 
 export default function Settings () {
   const [view, setView] = useState('Profile')
@@ -14,15 +14,17 @@ export default function Settings () {
   return (
     <>
       <div className='userSettings'>
-        <h1 className='userSettings__title'>Settings</h1>
+        <h1 style={{ textAlign: 'center' }} className='userSettings__title'>Settings</h1>
+
         <NavTabs
           view={view}
           onClickProfile={goToProfile}
           onClickMyPassword={goToPassword}
         />
-        {view === 'Profile' && <FormModifyProfile goToFormDeleteUser={goToFormDeleteUser} />}
-        {view === 'MyPassword' && <FormModifyPassword />}
-        {view === 'DeleteUser' && <FormDeleteUser />}
+
+        {view === 'Profile' && <ModifyUserForm goToFormDeleteUser={goToFormDeleteUser} />}
+        {view === 'MyPassword' && <ModifyPasswordForm />}
+        {view === 'DeleteUser' && <DeleteUserForm />}
       </div>
     </>
   )
