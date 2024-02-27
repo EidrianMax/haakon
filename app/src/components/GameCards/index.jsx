@@ -1,22 +1,20 @@
 import './index.css'
 import GameCard from '../GameCard'
 
-function ListOfGameCards ({ games, deleteGame }) {
+export default function GameCards ({ games, deleteGame }) {
   return (
     <ul className='GameCards'>
       {
-        games?.map(game => (
-          <GameCard key={game._id} {...game} deleteGame={deleteGame} />
+        games.map(game => (
+          <GameCard
+            key={game._id}
+            id={game._id}
+            name={game.name}
+            backgroundImage={game.backgroundImage}
+            deleteGame={deleteGame}
+          />
         ))
       }
     </ul>
   )
-}
-
-export default function GameCards ({ games, deleteGame }) {
-  const hasGames = games?.length > 0
-
-  return hasGames
-    ? <ListOfGameCards games={games} deleteGame={deleteGame} />
-    : <p>No games found</p>
 }

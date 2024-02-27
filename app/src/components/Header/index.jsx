@@ -1,15 +1,15 @@
 import { Link, useLocation } from 'wouter'
 import './index.css'
 
-export default function Header ({ showAside, user }) {
-  const [, setLocation] = useLocation()
+export default function Header ({ showSidebar, user }) {
+  const [, navigate] = useLocation()
 
   const onSubmit = async (event) => {
     event.preventDefault()
 
     const { query } = Object.fromEntries(new FormData(event.target))
 
-    setLocation(`/games/search/${query}`)
+    navigate(`/search/${query}`)
 
     event.target.reset()
   }
@@ -29,7 +29,7 @@ export default function Header ({ showAside, user }) {
 
       <span className='Header-name'>{user?.username}</span>
 
-      <button className='Header-perfil' onClick={showAside}>
+      <button className='Header-perfil' onClick={showSidebar}>
         <i className='fas fa-user-cog fa-lg' />
       </button>
     </header>

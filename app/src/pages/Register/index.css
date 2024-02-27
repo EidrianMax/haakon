@@ -1,17 +1,10 @@
-.Register {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
+.Register,
+.RegisterForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .Register-title {
   text-align: center;
-}
-
-.RegisterForm-input {
-  margin-bottom: 1em;
-}
-
-.RegisterForm-Button {
-  margin-bottom: 1em;
 }

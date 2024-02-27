@@ -1,19 +1,18 @@
 import './index.css'
 import Spinner from '../../components/Spinner'
-import useGifDetail from '../../hooks/useGameDetail'
 import { Redirect } from 'wouter'
-import useUser from '../../hooks/useUser'
+import Fav from '../../components/Fav'
+import Carousel from '../../components/Carousel'
+import Platforms from '../../components/Platforms'
+import UseGameDetail from '../../hooks/useGameDetail'
 
 export default function GameDetail ({ params: { gameId } }) {
-  const { gameDetail, loading, hasError } = useGifDetail({ gameId })
-  const { favGames, aggregateFavGame, removeFavGame } = useUser()
-
-  const isFav = favGames.some(favGame => favGame._id === gameId)
+  const { game, isLoading, hasError } = UseGameDetail({ gameId })
 
   const {
     name, released, description, screenshots,
     platforms, genres, score, website
-  } = gameDetail
+  } = game
 
   const formatDate = date => {
     const newDate = new Date(date)
@@ -21,58 +20,38 @@ export default function GameDetail ({ params: { gameId } }) {
     return newDate.toLocaleDateString()
   }
 
-  const onFav = () => {
-    if (!isFav) {
-      return aggregateFavGame(gameId)
-    }
+  if (isLoading) {
+    return <Spinner />
+  }
 
-    removeFavGame(gameId)
+  if (hasError) {
+    return <Redirect to='/404' />
   }
 
   return (
     <>
-      <div className='gameDetail'>
-        <div className='gameDetail__row'>
-          <div className='releasedDate gameDetail__releasedDate'>
-            <time>{formatDate(released)}</time>
-          </div>
-          <div className='score'>{score}</div>
-          <button className='btnIcon' onClick={onFav}>
-            <i className={`${isFav ? 'fa' : 'far'} fa-heart`} />
-          </button>
+      <div className='gameDetail__row'>
+        <div className='releasedDate gameDetail__releasedDate'>
+          <time>{formatDate(released)}</time>
         </div>
-        <h1 className='gameDetail__title'>{name}</h1>
-        <ul className='gallery'>
-          {
-            screenshots?.length
-              ? screenshots.map((item, index) => <li key={index} className='gallery__item'><img className='gallery__img' src={item} /></li>)
-              : null
-          }
-        </ul>
-        <p className='genres-title'>Description</p>
-        <p>{description}</p>
-        <p className='platforms-title'>Platforms</p>
-        <ul className='platforms-list'>
-          {
-            platforms
-              ? platforms.map(({ _id, name }) => <li className='platforms-list__item' key={_id}>{name}</li>)
-              : null
-          }
-        </ul>
-        <p className='genres-title'>Genres</p>
-        <ul className='genres-list'>
-          {
+        <div className='score'>{score}</div>
+        <Fav id={gameId} />
+      </div>
+      <h1 className='gameDetail__title'>{name}</h1>
+      <Carousel images={screenshots} />
+      <p className='genres-title'>Description</p>
+      <p>{description}</p>
+      <p className='platforms-title'>Platforms</p>
+      <Platforms platforms={platforms} />
+      <p className='genres-title'>Genres</p>
+      <ul className='genres-list'>
+        {
             genres?.length
               ? genres.map(({ _id, name }) => <li className='genres-list__item' key={_id}>{name}</li>)
               : null
           }
-        </ul>
-        <a href={website}>Website</a>
-      </div>
-
-      {loading && <Spinner />}
-
-      {hasError && <Redirect to='/404' />}
+      </ul>
+      <a href={website}>Website</a>
     </>
   )
 }

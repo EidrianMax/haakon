@@ -1,38 +1,22 @@
 import { useEffect, useState } from 'react'
-import useApp from './useApp'
-import { useLocation, useRoute } from 'wouter'
-import searchGames from '../services/search-games'
-import retrieveAllGames from '../services/retrieve-all-games'
+import { retrieveAllGames } from '../services'
 
 export default function useGames () {
-  const { showLoading, hideLoading, showModal } = useApp()
   const [games, setGames] = useState([])
-  const [location] = useLocation()
-  const [, params] = useRoute('/games/search/:query')
-  const query = params?.query
+  const [isLoading, setIsLoading] = useState(false)
+  const [hasError, setHasError] = useState(false)
 
-  const getGames = (query) => {
-    showLoading()
-    searchGames(query)
-      .then(setGames)
-      .catch(({ message }) => showModal({ message, variant: 'error' }))
-      .finally(() => hideLoading())
+  useEffect(() => {
+    setIsLoading(true)
+    retrieveAllGames()
+      .then(games => setGames(games))
+      .catch(e => setHasError(true))
+      .finally(() => setIsLoading(false))
+  }, [])
+
+  return {
+    games,
+    isLoading,
+    hasError
   }
-
-  useEffect(() => {
-    if (location === '/') {
-      retrieveAllGames()
-        .then(setGames)
-        .catch(({ message }) => showModal({ message, variant: 'error' }))
-        .finally(() => hideLoading())
-    }
-  }, [location])
-
-  useEffect(() => {
-    if (location.startsWith('/games/search/')) {
-      getGames(query)
-    }
-  }, [query])
-
-  return { games }
 }

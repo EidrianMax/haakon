@@ -1,0 +1,29 @@
+.ModifyUserForm {
+  width: 80%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ModifyUserForm-input {
+  display: block;
+  width: 100%;
+  background-color: var(--first);
+  padding: 0.6em 0.9em;
+  border: none;
+  border-radius: 0.5em;
+  color: var(--sixth);
+  font-family: inherit;
+  font-weight: inherit;
+}
+
+.ModifyUserForm-input::placeholder,
+.ModifyUserForm-input:focus {
+  color: var(--sixth);
+}
+
+.ModifyUserForm-Button-delete {
+  text-align: right;
+  cursor: pointer;
+}

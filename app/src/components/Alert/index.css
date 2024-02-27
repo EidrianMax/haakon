@@ -1,0 +1,24 @@
+.Alert {
+  padding: 1rem 1.5rem;
+  color: white;
+  border-radius: var(--border-radius);
+}
+.Alert::first-letter {
+  text-transform: uppercase;
+}
+
+.Alert--info {
+  background-color: var(--info);
+}
+
+.Alert--success {
+  background-color: var(--success);
+}
+
+.Alert--warning {
+  background-color: var(--warning);
+}
+
+.Alert--error {
+  background-color: var(--danger);
+}

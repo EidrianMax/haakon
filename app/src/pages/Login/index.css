@@ -1,17 +1,10 @@
-.Login {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
+.Login,
+.LoginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .Login-title {
   text-align: center;
-}
-
-.LoginForm-input {
-  margin-bottom: 1em;
-}
-
-.LoginForm-Button {
-  margin-bottom: 1em;
 }

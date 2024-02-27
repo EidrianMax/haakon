@@ -1,21 +1,21 @@
 import { useEffect, useState } from 'react'
-import { retrieveGameDetail } from '../services'
+import { searchGames } from '../services'
 
-export default function UseGameDetail ({ gameId }) {
-  const [game, setGame] = useState({})
+export default function useSearchGames ({ query }) {
+  const [games, setGames] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [hasError, setHasError] = useState(false)
 
   useEffect(() => {
     setIsLoading(true)
-    retrieveGameDetail(gameId)
-      .then(game => setGame(game))
-      .catch(() => setHasError(true))
+    searchGames(query)
+      .then(games => setGames(games))
+      .catch(e => setHasError(true))
       .finally(() => setIsLoading(false))
-  }, [gameId])
+  }, [query])
 
   return {
-    game,
+    games,
     isLoading,
     hasError
   }

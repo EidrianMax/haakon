@@ -1,0 +1,9 @@
+.NotFoundPage {
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.NotFoundPage img {
+  display: block;
+  margin: 0 auto;
+}
