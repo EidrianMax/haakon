@@ -1,20 +1,27 @@
 import { useContext, useState } from 'react'
 import { UserContext } from '../context/UserContext'
-import { addFavGame, addPlayedGame, addPlayingGame, deleteFavGame, deletePlayedGame, deletePlayingGame } from '../services'
+import {
+  addFavGame,
+  addPlayedGame,
+  addPlayingGame,
+  deleteFavGame,
+  deletePlayedGame,
+  deletePlayingGame
+} from '../services'
 
 export default function useUser () {
   const {
     token,
     setToken,
     user,
+    setUser,
     favGames,
     setFavGames,
     playingGames,
     setPlayingGames,
     playedGames,
     setPlayedGames,
-    isExpiredSession,
-    resetTokenAndUser
+    isExpiredSession
   } = useContext(UserContext)
   const [isLoading, setIsLoading] = useState(false)
   const [hasError, setHasError] = useState(false)
@@ -95,6 +102,15 @@ export default function useUser () {
     }
   }
 
+  const logout = () => {
+    setToken(null)
+    setUser({})
+    setFavGames([])
+    setPlayingGames([])
+    setPlayedGames([])
+    window.sessionStorage.removeItem('token')
+  }
+
   return {
     token,
     setToken,
@@ -114,7 +130,7 @@ export default function useUser () {
     aggregatePlayingGame,
     removePlayingGame,
     hasError,
-    resetTokenAndUser,
+    logout,
     isLoadingPlayingGame,
     isLoadingPlayedGame
   }

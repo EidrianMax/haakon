@@ -5,8 +5,11 @@ import { authenticateUser } from '../../services'
 import Alert from '../../components/Alert'
 import useUser from '../../hooks/useUser'
 import { Helmet } from 'react-helmet'
+import { useForm } from 'react-hook-form'
+import ErrorMessage from '../../components/ErrorMessage'
 
 export default function Login () {
+  const { register, formState: { errors }, handleSubmit } = useForm()
   const [isLoading, setIsLoading] = useState(false)
   const [hasError, setHasError] = useState('')
   const [, navigate] = useLocation()
@@ -16,11 +19,7 @@ export default function Login () {
     navigate('/register')
   }
 
-  const onSubmit = async (event) => {
-    event.preventDefault()
-
-    const { username, password } = Object.fromEntries(new FormData(event.target))
-
+  const onSubmit = async ({ username, password }) => {
     try {
       setHasError('')
       setIsLoading(true)
@@ -50,29 +49,32 @@ export default function Login () {
 
         {hasError && <Alert variant='error'>{hasError}</Alert>}
 
-        <form className='LoginForm' onSubmit={onSubmit}>
+        <form className='LoginForm' onSubmit={handleSubmit(onSubmit)}>
           <input
+            {...register('username', { required: true })}
             className='Input LoginForm-Input'
-            type='text'
             placeholder='Username'
-            name='username'
           />
+          {errors.username && <ErrorMessage>Username is required</ErrorMessage>}
+
           <input
+            {...register('password', { required: true })}
             className='Input LoginForm-Input'
             type='password'
             placeholder='Password'
             name='password'
           />
+          {errors.password && <ErrorMessage>Password is required</ErrorMessage>}
 
           <button
             type='submit'
             className='Button LoginForm-Button'
           >
             {
-            isLoading
-              ? <i className='fas fa-spinner fa-spin' />
-              : 'Login'
-          }
+              isLoading
+                ? <i className='fas fa-spinner fa-spin' />
+                : 'Login'
+            }
           </button>
 
           <button

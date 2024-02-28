@@ -15,7 +15,12 @@ export default function UserContextProvider ({ children }) {
 
   useEffect(() => {
     if (token) {
-      Promise.all([retrieveUser(token), retrieveFavGames(token), retrievePlayingGames(token), retrievePlayedGames(token)])
+      Promise.all([
+        retrieveUser(token),
+        retrieveFavGames(token),
+        retrievePlayingGames(token),
+        retrievePlayedGames(token)
+      ])
         .then(values => {
           const [user, favGames, playingGames, playedGames] = values
 
@@ -37,28 +42,19 @@ export default function UserContextProvider ({ children }) {
     }
   }, [token])
 
-  const resetTokenAndUser = () => {
-    setToken(null)
-    setUser({})
-    setFavGames([])
-    setPlayingGames([])
-    setPlayedGames([])
-    window.sessionStorage.removeItem('token')
-  }
-
   return (
     <UserContext.Provider value={{
       token,
       setToken,
       user,
+      setUser,
       favGames,
       setFavGames,
       playingGames,
       setPlayingGames,
       playedGames,
       setPlayedGames,
-      isExpiredSession,
-      resetTokenAndUser
+      isExpiredSession
     }}
     >
       {children}

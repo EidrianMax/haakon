@@ -3,7 +3,7 @@ import { useLocation } from 'wouter'
 import useUser from '../../hooks/useUser'
 
 export default function Sidebar ({ hideSidebar }) {
-  const { token, user, setToken } = useUser()
+  const { token, user, logout } = useUser()
   const [, navigate] = useLocation()
 
   const goToRegister = () => {
@@ -26,9 +26,8 @@ export default function Sidebar ({ hideSidebar }) {
     hideSidebar()
   }
 
-  const goOut = () => {
-    setToken('')
-    window.sessionStorage.removeItem('token')
+  const handleClickLogout = () => {
+    logout()
     navigate('/')
   }
 
@@ -63,7 +62,7 @@ export default function Sidebar ({ hideSidebar }) {
                     <i className='fas fa-cog' />{' '}
                     Settings
                   </li>
-                  <li className='Sidebar-list-item' onClick={goOut}>
+                  <li className='Sidebar-list-item' onClick={handleClickLogout}>
                     <i className='fas fa-sign-out-alt' />{' '}
                     Go out
                   </li>

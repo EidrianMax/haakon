@@ -4,26 +4,24 @@ import { unregisterUser } from '../../services'
 import useUser from '../../hooks/useUser'
 import Alert from '../Alert'
 import { useLocation } from 'wouter'
+import { useForm } from 'react-hook-form'
 
 export default function DeleteUserForm () {
-  const { token, resetTokenAndUser } = useUser()
+  const { register, handleSubmit } = useForm()
+  const { token, logout } = useUser()
   const [isLoading, setIsLoading] = useState(false)
   const [hasError, setHasError] = useState('')
   const [isDeleted, setIsDeleted] = useState(false)
   const [, navigate] = useLocation()
 
-  const handldeSubmit = async (event) => {
-    event.preventDefault()
-
-    const password = event.target.password.value
-
+  const onSubmit = async ({ password }) => {
     try {
       setIsLoading(true)
       await unregisterUser(token, password)
       setIsDeleted(true)
 
       setTimeout(() => {
-        resetTokenAndUser()
+        logout()
         navigate('/')
       }, 4000)
     } catch ({ message }) {
@@ -47,15 +45,15 @@ export default function DeleteUserForm () {
         Deleting your account is irreversible. Enter your account password to confirm you want to delete your account and all associated user data
       </p>
 
-      <form className='DeleteUserForm-form' onSubmit={handldeSubmit}>
+      <form className='DeleteUserForm-form' onSubmit={handleSubmit(onSubmit)}>
         <input
+          {...register('password')}
           className='Input DeleteUserForm-input'
           type='password'
-          name='password'
-          id='password'
           placeholder='Password'
         />
-        <button type='submit' className='Button DeleteUserForm-Button'>
+
+        <button className='Button DeleteUserForm-Button'>
           {
             isLoading
               ? <i className='fas fa-spinner fa-spin' />
