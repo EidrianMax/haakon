@@ -1,5 +1,6 @@
-import useUser from '../../hooks/useUser'
 import './index.css'
+import { useLocation } from 'wouter'
+import useUser from '../../hooks/useUser'
 
 export default function Tooltip ({
   id,
@@ -16,13 +17,17 @@ export default function Tooltip ({
     removePlayedGame,
     isLoading,
     isLoadingPlayingGame,
-    isLoadingPlayedGame
+    isLoadingPlayedGame,
+    token
   } = useUser()
+  const [, navigate] = useLocation()
 
   const isPlayedGame = playedGames.some(playedGame => playedGame._id === id)
   const isPlayingGame = playingGames.some(playingGame => playingGame._id === id)
 
   const handleClickPlayedGame = () => {
+    if (!token) return navigate('/login')
+
     if (!isLoading) {
       if (isPlayedGame) {
         removePlayedGame(id)
@@ -33,6 +38,8 @@ export default function Tooltip ({
   }
 
   const handleClickPlayingGame = () => {
+    if (!token) return navigate('/login')
+
     if (!isLoading) {
       if (isPlayingGame) {
         removePlayingGame(id)
