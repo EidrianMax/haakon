@@ -5,7 +5,7 @@ export default function Games ({ games }) {
   return (
     <ul className='Games'>
       {
-        games.slice(0, 10).map(({ id, name, backgroundImage, platforms, genres, score }) => (
+        games.map(({ id, name, backgroundImage, platforms, genres, score }) => (
           <Game
             key={id}
             id={id}
