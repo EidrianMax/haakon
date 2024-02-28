@@ -3,18 +3,16 @@ import modifyUser from '../../services/modify-user'
 import { useState } from 'react'
 import useUser from '../../hooks/useUser'
 import Alert from '../Alert'
+import { useForm } from 'react-hook-form'
 
 export default function ModifyUserForm ({ goToFormDeleteUser }) {
+  const { register, handleSubmit } = useForm()
   const { token } = useUser()
   const [isLoading, setIsLoading] = useState(false)
   const [hasError, setHasError] = useState('')
   const [isModified, setIsModified] = useState(false)
 
-  const handleSubmit = async (event) => {
-    event.preventDefault()
-
-    const { name, username } = Object.fromEntries(new FormData(event.target))
-
+  const onSubmit = async ({ name, username }) => {
     try {
       setIsLoading(true)
       await modifyUser(token, name, username)
@@ -32,23 +30,23 @@ export default function ModifyUserForm ({ goToFormDeleteUser }) {
   }
 
   return (
-    <form className='ModifyUserForm' onSubmit={handleSubmit}>
+    <form className='ModifyUserForm' onSubmit={handleSubmit(onSubmit)}>
       {isModified && <Alert variant='success'>User modified successfully</Alert>}
 
       {hasError && <Alert variant='error'>{hasError}</Alert>}
 
       <input
+        {...register('name')}
         className='ModifyUserForm-input'
-        type='text'
-        name='name'
         placeholder='Name'
       />
+
       <input
+        {...register('username')}
         className='ModifyUserForm-input'
-        type='text'
-        name='username'
         placeholder='Username'
       />
+
       <button className='Button ModifyUserForm-Button'>
         {
           isLoading
@@ -56,6 +54,7 @@ export default function ModifyUserForm ({ goToFormDeleteUser }) {
             : 'Save changes'
         }
       </button>
+
       <p className='ModifyUserForm-Button-delete' onClick={goToFormDeleteUser}>
         Delete your account
       </p>
